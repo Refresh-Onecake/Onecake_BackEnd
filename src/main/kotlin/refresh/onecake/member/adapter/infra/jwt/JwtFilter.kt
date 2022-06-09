@@ -37,13 +37,16 @@ class JwtFilter
     }
 
 
-    //RuntimeException 고치기 (exception 커스텀)
-    private fun resolveToken(request: HttpServletRequest): String {
-        var bearerToken:String = request.getHeader(AUTHORIZATION_HEADER)
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-            return bearerToken.substring(7)
+    private fun resolveToken(request: HttpServletRequest): String? {
+        var bearerToken:String? = request.getHeader(AUTHORIZATION_HEADER)
+        if (bearerToken != null) {
+            if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+                return bearerToken.substring(7)
+            } else {
+                return null
+            }
         } else {
-            return ""
+            return null
         }
     }
 }

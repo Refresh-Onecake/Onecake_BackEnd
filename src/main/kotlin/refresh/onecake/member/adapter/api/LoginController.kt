@@ -6,11 +6,9 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import refresh.onecake.member.adapter.api.dto.LoginRequestDto
-import refresh.onecake.member.adapter.api.dto.SignUpRequestDto
-import refresh.onecake.member.adapter.api.dto.SignUpResponseDto
-import refresh.onecake.member.adapter.api.dto.TokenDto
+import refresh.onecake.member.adapter.api.dto.*
 import refresh.onecake.member.application.LoginService
+
 
 @RequestMapping("/api/v1/auth")
 @RestController
@@ -27,4 +25,9 @@ class LoginController (
     fun login(@RequestBody loginRequestDto: LoginRequestDto): ResponseEntity<TokenDto> {
         return ApiResponse.success(HttpStatus.OK,  loginService.login(loginRequestDto))
     }
+
+//    @PostMapping("/reissue")
+//    fun reissue(@RequestBody tokenRequestDto: TokenRequestDto): ResponseEntity<TokenDto> {
+//        return ApiResponse.success(HttpStatus.OK, loginService.reissue(tokenRequestDto))
+//    }
 }

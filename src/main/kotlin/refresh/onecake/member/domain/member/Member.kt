@@ -2,7 +2,6 @@ package refresh.onecake.member.domain.member
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import refresh.onecake.member.domain.BaseTimeEntity
-import refresh.onecake.member.domain.ModifyTime
 import javax.persistence.*
 
 @EntityListeners(AuditingEntityListener::class)
