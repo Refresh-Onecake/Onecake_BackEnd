@@ -9,7 +9,8 @@ import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class JwtFilter(
+class JwtFilter
+    (
     private val tokenProvider: TokenProvider
 ) : OncePerRequestFilter() {
 
@@ -41,7 +42,9 @@ class JwtFilter(
         var bearerToken:String = request.getHeader(AUTHORIZATION_HEADER)
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
             return bearerToken.substring(7)
-        } else throw RuntimeException()
+        } else {
+            return ""
+        }
     }
 }
 
