@@ -30,8 +30,8 @@ class TokenProvider {
     companion object {
         const val AUTHORITIES_KEY = "auth"
         const val BEARER_TYPE = "bearer"
-        const val ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30
-        const val REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7
+        const val ACCESS_TOKEN_EXPIRE_TIME = (1000 * 60 * 30).toLong()
+        const val REFRESH_TOKEN_EXPIRE_TIME = (1000 * 60 * 60 * 24 * 7).toLong()
     }
 
     private lateinit var key: Key
@@ -56,11 +56,11 @@ class TokenProvider {
             .setSubject(authentication.name)
             .claim(AUTHORITIES_KEY, autorities)
             .setExpiration(accessTokenExpiresIn)
-            .signWith(SignatureAlgorithm.HS512, key)
+            .signWith(key, SignatureAlgorithm.HS512)
             .compact()
         var refreshToken:String = Jwts.builder()
             .setExpiration(Date(now + REFRESH_TOKEN_EXPIRE_TIME))
-            .signWith(SignatureAlgorithm.HS512,key)
+            .signWith(key, SignatureAlgorithm.HS512)
             .compact()
 
         return TokenDto(
@@ -71,7 +71,7 @@ class TokenProvider {
         )
     }
 
-    fun getAuthentication(accessToken: String): Authentication {
+    fun getAuthentication(accessToken: String?): Authentication {
         var claims:Claims = parseClaims(accessToken)
 
         if (claims.get(AUTHORITIES_KEY) == null) {
@@ -94,7 +94,7 @@ class TokenProvider {
 
     fun validateToken(token: String?): Boolean {
         try {
-            Jwts.parser().setSigningKey(key).parseClaimsJws(token)
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token)
             return true
         } catch (e: SecurityException) {
             logger.info("잘못된 JWT 서명입니다.")
@@ -111,9 +111,9 @@ class TokenProvider {
     }
 
     // 수정
-    private fun parseClaims(accessToken: String): Claims {
-        return try{
-            Jwts.parser().setSigningKey(key).parseClaimsJws(accessToken).body
+    private fun parseClaims(accessToken: String?): Claims {
+        return try {
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).body
         } catch (e: ExpiredJwtException) {
             e.claims
         }
@@ -122,7 +122,7 @@ class TokenProvider {
     fun getExpiration(accessToken: String): Long {
         // accessToken 남은 유효시간
         val expiration: Date =
-            Jwts.parser().setSigningKey(key).parseClaimsJws(accessToken).body.expiration
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).body.expiration
         // 현재 시간
         val now = Date().time
         return expiration.time - now
