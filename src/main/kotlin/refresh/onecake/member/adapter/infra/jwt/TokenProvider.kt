@@ -13,10 +13,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
-import refresh.onecake.member.adapter.api.TokenDto
+import refresh.onecake.member.adapter.api.dto.TokenDto
 import java.security.Key
 import java.util.*
 import java.util.stream.Collectors
+
 
 @Component
 class TokenProvider {
@@ -118,6 +119,13 @@ class TokenProvider {
         }
     }
 
-
+    fun getExpiration(accessToken: String): Long {
+        // accessToken 남은 유효시간
+        val expiration: Date =
+            Jwts.parser().setSigningKey(key).parseClaimsJws(accessToken).body.expiration
+        // 현재 시간
+        val now = Date().time
+        return expiration.time - now
+    }
 
 }
