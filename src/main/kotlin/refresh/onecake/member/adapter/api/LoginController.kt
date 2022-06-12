@@ -1,5 +1,6 @@
 package refresh.onecake.member.adapter.api
 
+import antlr.Token
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
@@ -34,8 +35,14 @@ class LoginController (
         return ApiResponse.success(HttpStatus.OK,  loginService.login(loginRequestDto))
     }
 
-//    @PostMapping("/reissue")
-//    fun reissue(@RequestBody tokenRequestDto: TokenRequestDto): ResponseEntity<TokenDto> {
-//        return ApiResponse.success(HttpStatus.OK, loginService.reissue(tokenRequestDto))
-//    }
+    @PostMapping("/reissue")
+    fun reissue(@RequestBody tokenRequestDto: TokenRequestDto): ResponseEntity<TokenDto> {
+        val tokenDto:TokenDto? = loginService.reissue(tokenRequestDto)
+        return if (tokenDto != null) {
+            ApiResponse.success(HttpStatus.OK, tokenDto)
+        } else {
+            val invalidTokenDto = TokenDto("", "", "", -1L)
+            ApiResponse.success(HttpStatus.BAD_REQUEST, invalidTokenDto)
+        }
+    }
 }
