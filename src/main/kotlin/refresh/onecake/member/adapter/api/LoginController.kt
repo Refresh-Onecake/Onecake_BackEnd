@@ -1,5 +1,7 @@
 package refresh.onecake.member.adapter.api
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -12,15 +14,18 @@ import refresh.onecake.member.application.LoginService
 
 @RequestMapping("/api/v1/auth")
 @RestController
+@Tag(name = "test")
 class LoginController (
     private val loginService: LoginService
 ){
 
+    @Operation(summary = "hello")
     @PostMapping("/signup")
     fun signup(@RequestBody signUpRequestDto: SignUpRequestDto): ResponseEntity<SignUpResponseDto> {
         return ApiResponse.success(HttpStatus.OK, loginService.signup(signUpRequestDto))
     }
 
+    @Operation(summary = "hello22")
     @PostMapping("/login")
     fun login(@RequestBody loginRequestDto: LoginRequestDto): ResponseEntity<TokenDto> {
         return ApiResponse.success(HttpStatus.OK,  loginService.login(loginRequestDto))
