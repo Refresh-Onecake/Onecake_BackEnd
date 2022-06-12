@@ -1,4 +1,4 @@
-package com.github.maillink.config
+package refresh.onecake.member.adapter.infra.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
