@@ -9,6 +9,7 @@ import springfox.documentation.service.ApiInfo
 import springfox.documentation.spi.DocumentationType
 import springfox.documentation.spring.web.plugins.Docket
 
+
 @Configuration
 class SwaggerConfig {
     @Bean
@@ -16,7 +17,7 @@ class SwaggerConfig {
         return Docket(DocumentationType.OAS_30)
             .useDefaultResponseMessages(false)
             .select()
-            .apis(RequestHandlerSelectors.basePackage("com.example.springswagger.controller"))
+            .apis(RequestHandlerSelectors.basePackage("refresh.onecake.member.adapter.api"))
             .paths(PathSelectors.any())
             .build()
             .apiInfo(apiInfo())

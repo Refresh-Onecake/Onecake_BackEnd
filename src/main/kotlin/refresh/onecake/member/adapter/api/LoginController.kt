@@ -14,18 +14,17 @@ import refresh.onecake.member.application.LoginService
 
 @RequestMapping("/api/v1/auth")
 @RestController
-@Tag(name = "test")
 class LoginController (
     private val loginService: LoginService
 ){
 
-    @Operation(summary = "hello")
+    @Operation(summary = "회원가입")
     @PostMapping("/signup")
     fun signup(@RequestBody signUpRequestDto: SignUpRequestDto): ResponseEntity<SignUpResponseDto> {
         return ApiResponse.success(HttpStatus.OK, loginService.signup(signUpRequestDto))
     }
 
-    @Operation(summary = "hello22")
+    @Operation(summary = "로그인")
     @PostMapping("/login")
     fun login(@RequestBody loginRequestDto: LoginRequestDto): ResponseEntity<TokenDto> {
         return ApiResponse.success(HttpStatus.OK,  loginService.login(loginRequestDto))
