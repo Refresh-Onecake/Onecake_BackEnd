@@ -17,11 +17,15 @@ import refresh.onecake.member.application.LoginService
 class LoginController (
     private val loginService: LoginService
 ){
-
     @Operation(summary = "회원가입")
     @PostMapping("/signup")
     fun signup(@RequestBody signUpRequestDto: SignUpRequestDto): ResponseEntity<SignUpResponseDto> {
-        return ApiResponse.success(HttpStatus.OK, loginService.signup(signUpRequestDto))
+        val signUpResponseDto:SignUpResponseDto = loginService.signup(signUpRequestDto)
+        return if (signUpResponseDto.success) {
+            ApiResponse.success(HttpStatus.OK, signUpResponseDto)
+        } else {
+            ApiResponse.success(HttpStatus.BAD_REQUEST, signUpResponseDto)
+        }
     }
 
     @Operation(summary = "로그인")
