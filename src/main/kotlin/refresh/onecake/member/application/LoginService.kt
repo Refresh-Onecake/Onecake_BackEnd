@@ -72,7 +72,7 @@ class LoginService (
 
         val tokenDto = tokenProvider.generateTokenDto(authentication)
 
-        redisTemplate.opsForValue().getAndDelete("RT:" + authentication.name)
+        redisTemplate.delete("RT:" + authentication.name)
         redisTemplate.opsForValue().set("RT:" + authentication.name, tokenDto.refreshToken, (1000 * 60 * 60 * 24 * 7).toLong(), TimeUnit.MILLISECONDS)
 
         return tokenDto
