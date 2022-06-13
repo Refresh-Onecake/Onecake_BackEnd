@@ -10,11 +10,6 @@ import javax.validation.constraints.NotEmpty
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy::class)
 data class LoginRequestDto(
 
-    @field:NotEmpty(message="아이디를 입력하세요.")
-    @field:NotBlank
     val userId: String,
-
-    @field:NotEmpty
-    @field:NotBlank
     val password: String
 )
