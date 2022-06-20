@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import refresh.onecake.member.adapter.api.dto.*
 import refresh.onecake.member.adapter.infra.jwt.TokenProvider
+import refresh.onecake.member.application.util.SecurityUtil
 import refresh.onecake.member.domain.consumer.Consumer
 import refresh.onecake.member.domain.member.Member
 import refresh.onecake.member.domain.member.MemberRepository
@@ -55,7 +56,7 @@ class LoginService (
     }
 
     @Transactional
-    fun login(loginRequestDto: LoginRequestDto): TokenDto {
+    fun login(loginRequestDto: LoginRequestDto): TokenRoleDto {
 
         val authenticationToken = UsernamePasswordAuthenticationToken(loginRequestDto.userId, loginRequestDto.password)
 
@@ -63,10 +64,12 @@ class LoginService (
 
         val tokenDto: TokenDto = tokenProvider.generateTokenDto(authentication)
 
-        redisTemplate.opsForValue()
-            .set("RT:" + authentication.name, tokenDto.refreshToken, (1000 * 60 * 60 * 24 * 7).toLong(), TimeUnit.MILLISECONDS)
+        val tokenRoleDto = TokenRoleDto(grantType = tokenDto.grantType, accessToken = tokenDto.accessToken, refreshToken = tokenDto.refreshToken, accessTokenExpiresIn = tokenDto.accessTokenExpiresIn, role = memberRepository.getByUserId(loginRequestDto.userId).memberType)
 
-        return tokenDto
+        redisTemplate.opsForValue()
+            .set("RT:" + authentication.name, tokenRoleDto.refreshToken, (1000 * 60 * 60 * 24 * 7).toLong(), TimeUnit.MILLISECONDS)
+
+        return tokenRoleDto
     }
 
     @Transactional
@@ -84,6 +87,7 @@ class LoginService (
         }
 
         val tokenDto = tokenProvider.generateTokenDto(authentication)
+//        val tokenRoleDto = TokenRoleDto(grantType = tokenDto.grantType, accessToken = tokenDto.accessToken, refreshToken = tokenDto.refreshToken, accessTokenExpiresIn = tokenDto.accessTokenExpiresIn, role = memberRepository.getByUserId(loginRequestDto.userId).memberType)
 
         redisTemplate.delete("RT:" + authentication.name)
         redisTemplate.opsForValue().set("RT:" + authentication.name, tokenDto.refreshToken, (1000 * 60 * 60 * 24 * 7).toLong(), TimeUnit.MILLISECONDS)
