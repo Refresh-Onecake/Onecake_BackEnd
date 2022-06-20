@@ -7,5 +7,6 @@ import java.util.*
 @Repository
 interface MemberRepository: JpaRepository<Member, Long> {
     fun findByUserId(userId:String): Member?
-    fun existsByUserId(suerId:String) : Boolean
+    fun getByUserId(userId:String): Member
+    fun existsByUserId(userId:String) : Boolean
 }
