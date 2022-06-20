@@ -77,6 +77,7 @@ class SwaggerNotes {
                     "refreshToken": "AiOjEfsSfU3MDI~~~~~",
                     "accessTokenExpiresIn": 1655099800307
                 }
+                
             - 400
                 {
                     "grantType": "",
@@ -87,6 +88,35 @@ class SwaggerNotes {
                 - refresh token이 유효하지 않거나
                 - 로그아웃된 사용자이거나
                 - 토큰의 유저정보가 일치하지 않을 때
+                
+            - 401
+                - 토큰 만료 시간이 다 되었을 때
         """
+
+        const val REGISTER_STORE_MEMO =
+            """
+                NOTE
+                - register store
+                
+                REQUEST HEADER
+                - bearer token
+                - content-type : multipart/form-data
+                
+                REQUEST BODY
+                - json : applyStoreRequestDto
+                - image : multipartFile(image 형식)
+                
+                RESPONSE BODY
+                - 200
+                    {
+                        "success": true,
+                        "message": "입점 신청을 완료하였습니다."
+                    }
+                    ,
+                    {
+                        "success": false,
+                        "message": "이미 입점한 판매자 입니다."
+                    }
+            """
     }
 }

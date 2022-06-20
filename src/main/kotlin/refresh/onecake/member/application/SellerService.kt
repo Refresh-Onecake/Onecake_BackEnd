@@ -23,8 +23,7 @@ class SellerService (
     fun registerStore(image: MultipartFile, applyStoreRequestDto: ApplyStoreRequestDto) : DefaultResponseDto{
         val id = SecurityUtil.getCurrentMemberId()
         if (storeRepository.existsById(id)) {
-            println(applyStoreRequestDto.storeName)
-            throw DuplicateRequestException("이미 입점한 판매자입니다.")
+            return DefaultResponseDto(false, "이미 입점한 판매자 입니다.")
         } else {
             val address = Address(
                 id = id,
