@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 import refresh.onecake.member.domain.member.Member
 import refresh.onecake.member.domain.member.MemberRepository
+import refresh.onecake.member.domain.seller.SellerRepository
 import java.util.*
 import javax.transaction.Transactional
 

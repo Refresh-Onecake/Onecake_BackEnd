@@ -1,7 +1,6 @@
 package refresh.onecake.member.application
 
 import org.springframework.data.redis.core.RedisTemplate
-import org.springframework.data.redis.core.ValueOperations
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.core.Authentication
@@ -9,8 +8,11 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import refresh.onecake.member.adapter.api.dto.*
 import refresh.onecake.member.adapter.infra.jwt.TokenProvider
+import refresh.onecake.member.domain.consumer.Consumer
 import refresh.onecake.member.domain.member.Member
 import refresh.onecake.member.domain.member.MemberRepository
+import refresh.onecake.member.domain.member.MemberType
+import refresh.onecake.member.domain.seller.Seller
 import java.util.concurrent.TimeUnit
 import javax.transaction.Transactional
 
@@ -26,7 +28,7 @@ class LoginService (
 
     @Transactional
     fun signup(signUpRequestDto: SignUpRequestDto): SignUpResponseDto {
-        if (memberRepository.existsByUserId(signUpRequestDto.userId)) {
+        if (memberRepository.existsByUserId(signUpRequestDto.userId) ) {
             return SignUpResponseDto(false, "중복된 아이디 입니다.")
         }
         var member = Member(
@@ -37,6 +39,17 @@ class LoginService (
             memberType = signUpRequestDto.memberType,
             profileImg = null
         )
+        if (signUpRequestDto.memberType == MemberType.CONSUMER) {
+            var consumer = Consumer(
+                id = member.id
+            )
+        } else {
+            var seller = Seller(
+                id = member.id,
+                store = null
+            )
+        }
+
         memberRepository.save(member)
         return SignUpResponseDto(true, "회원가입을 성공했습니다.")
     }

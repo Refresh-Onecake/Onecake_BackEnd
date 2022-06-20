@@ -62,6 +62,9 @@ dependencies {
 //	implementation("org.springdoc:springdoc-openapi-ui:1.6.1")
 //	implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.1")
 	implementation("io.springfox:springfox-boot-starter:3.0.0")
+
+	// aws s3
+	implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
 }
 
 tasks.withType<KotlinCompile> {
