@@ -7,16 +7,14 @@ import refresh.onecake.member.adapter.api.dto.ApplyStoreRequestDto
 import refresh.onecake.member.adapter.api.dto.DefaultResponseDto
 import refresh.onecake.member.application.util.SecurityUtil
 import refresh.onecake.member.domain.member.MemberRepository
-import refresh.onecake.member.domain.seller.Address
-import refresh.onecake.member.domain.seller.AddressRepository
-import refresh.onecake.member.domain.seller.Store
-import refresh.onecake.member.domain.seller.StoreRepository
+import refresh.onecake.member.domain.seller.*
 
 @Service
 class SellerService (
     private val memberRepository: MemberRepository,
     private val storeRepository: StoreRepository,
     private val addressRepository: AddressRepository,
+    private val sellerRepository: SellerRepository,
     private val s3Uploader: S3Uploader
 ){
 
@@ -49,6 +47,11 @@ class SellerService (
                 storeImage = s3Uploader.upload(image)
             )
             storeRepository.save(store)
+            val seller = Seller(
+                id = id,
+                store = store
+            )
+            sellerRepository.save(seller)
             return DefaultResponseDto(true, "입점 신청을 완료하였습니다.")
         }
     }
