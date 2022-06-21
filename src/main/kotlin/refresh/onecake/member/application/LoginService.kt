@@ -10,10 +10,12 @@ import refresh.onecake.member.adapter.api.dto.*
 import refresh.onecake.member.adapter.infra.jwt.TokenProvider
 import refresh.onecake.member.application.util.SecurityUtil
 import refresh.onecake.member.domain.consumer.Consumer
+import refresh.onecake.member.domain.consumer.ConsumerRepository
 import refresh.onecake.member.domain.member.Member
 import refresh.onecake.member.domain.member.MemberRepository
 import refresh.onecake.member.domain.member.MemberType
 import refresh.onecake.member.domain.seller.Seller
+import refresh.onecake.member.domain.seller.SellerRepository
 import java.util.concurrent.TimeUnit
 import javax.transaction.Transactional
 
@@ -24,7 +26,9 @@ class LoginService (
     private val memberRepository: MemberRepository,
     private val passwordEncoder: PasswordEncoder,
     private val tokenProvider: TokenProvider,
-    private val redisTemplate: RedisTemplate<String, Any>
+    private val redisTemplate: RedisTemplate<String, Any>,
+    private val sellerRepository: SellerRepository,
+    private val consumerRepository: ConsumerRepository
 ){
 
     @Transactional
@@ -44,11 +48,13 @@ class LoginService (
             var consumer = Consumer(
                 id = member.id
             )
+            consumerRepository.save(consumer)
         } else {
             var seller = Seller(
                 id = member.id,
                 store = null
             )
+            sellerRepository.save(seller)
         }
 
         memberRepository.save(member)
