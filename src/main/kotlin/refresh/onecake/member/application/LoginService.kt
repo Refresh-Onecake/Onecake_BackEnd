@@ -21,7 +21,7 @@ import javax.transaction.Transactional
 
 
 @Service
-class LoginService (
+class LoginService(
     private val authenticationManagerBuilder: AuthenticationManagerBuilder,
     private val memberRepository: MemberRepository,
     private val passwordEncoder: PasswordEncoder,
@@ -29,24 +29,30 @@ class LoginService (
     private val redisTemplate: RedisTemplate<String, Any>,
     private val sellerRepository: SellerRepository,
     private val consumerRepository: ConsumerRepository
-){
+) {
 
-    @Transactional
     fun signup(signUpRequestDto: SignUpRequestDto): SignUpResponseDto {
-        if (memberRepository.existsByUserId(signUpRequestDto.userId) ) {
+        if (memberRepository.existsByUserId(signUpRequestDto.userId)) {
             return SignUpResponseDto(false, "중복된 아이디 입니다.")
         }
-        var member = Member(
-            userId = signUpRequestDto.userId,
-            userName = signUpRequestDto.name,
-            password = passwordEncoder.encode(signUpRequestDto.password),
-            phoneNumber = signUpRequestDto.phoneNumber,
-            memberType = signUpRequestDto.memberType,
-            profileImg = null
+        val member = memberRepository.save(
+            Member(
+                userId = signUpRequestDto.userId,
+                userName = signUpRequestDto.name,
+                password = passwordEncoder.encode(signUpRequestDto.password),
+                phoneNumber = signUpRequestDto.phoneNumber,
+                memberType = signUpRequestDto.memberType,
+                profileImg = null
+            )
         )
-        memberRepository.save(member)
+        giveRole(member, signUpRequestDto.memberType)
+        return SignUpResponseDto(true, "회원가입을 성공했습니다.")
+    }
 
-        if (signUpRequestDto.memberType == MemberType.CONSUMER) {
+    @Transactional
+    fun giveRole(member: Member, role: MemberType) {
+
+        if (role == MemberType.CONSUMER) {
             var consumer = Consumer(
                 id = member.id
             )
@@ -58,7 +64,6 @@ class LoginService (
             )
             sellerRepository.save(seller)
         }
-        return SignUpResponseDto(true, "회원가입을 성공했습니다.")
     }
 
     @Transactional
@@ -70,10 +75,21 @@ class LoginService (
 
         val tokenDto: TokenDto = tokenProvider.generateTokenDto(authentication)
 
-        val tokenRoleDto = TokenRoleDto(grantType = tokenDto.grantType, accessToken = tokenDto.accessToken, refreshToken = tokenDto.refreshToken, accessTokenExpiresIn = tokenDto.accessTokenExpiresIn, role = memberRepository.getByUserId(loginRequestDto.userId).memberType)
+        val tokenRoleDto = TokenRoleDto(
+            grantType = tokenDto.grantType,
+            accessToken = tokenDto.accessToken,
+            refreshToken = tokenDto.refreshToken,
+            accessTokenExpiresIn = tokenDto.accessTokenExpiresIn,
+            role = memberRepository.getByUserId(loginRequestDto.userId).memberType
+        )
 
         redisTemplate.opsForValue()
-            .set("RT:" + authentication.name, tokenRoleDto.refreshToken, (1000 * 60 * 60 * 24 * 7).toLong(), TimeUnit.MILLISECONDS)
+            .set(
+                "RT:" + authentication.name,
+                tokenRoleDto.refreshToken,
+                (1000 * 60 * 60 * 24 * 7).toLong(),
+                TimeUnit.MILLISECONDS
+            )
 
         return tokenRoleDto
     }
@@ -87,7 +103,7 @@ class LoginService (
 
         val authentication = tokenProvider.getAuthentication(tokenRequestDto.accessToken)
 
-        val refreshToken:Any? = redisTemplate.opsForValue().get("RT:" + authentication.name)
+        val refreshToken: Any? = redisTemplate.opsForValue().get("RT:" + authentication.name)
         if (refreshToken == null || refreshToken != tokenRequestDto.refreshToken) {
             return null
         }
@@ -96,7 +112,12 @@ class LoginService (
 //        val tokenRoleDto = TokenRoleDto(grantType = tokenDto.grantType, accessToken = tokenDto.accessToken, refreshToken = tokenDto.refreshToken, accessTokenExpiresIn = tokenDto.accessTokenExpiresIn, role = memberRepository.getByUserId(loginRequestDto.userId).memberType)
 
         redisTemplate.delete("RT:" + authentication.name)
-        redisTemplate.opsForValue().set("RT:" + authentication.name, tokenDto.refreshToken, (1000 * 60 * 60 * 24 * 7).toLong(), TimeUnit.MILLISECONDS)
+        redisTemplate.opsForValue().set(
+            "RT:" + authentication.name,
+            tokenDto.refreshToken,
+            (1000 * 60 * 60 * 24 * 7).toLong(),
+            TimeUnit.MILLISECONDS
+        )
 
         return tokenDto
     }
