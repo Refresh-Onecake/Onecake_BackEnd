@@ -1,6 +1,5 @@
 package refresh.onecake.member.application
 
-import com.sun.jdi.request.DuplicateRequestException
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import refresh.onecake.member.adapter.api.dto.ApplyStoreRequestDto

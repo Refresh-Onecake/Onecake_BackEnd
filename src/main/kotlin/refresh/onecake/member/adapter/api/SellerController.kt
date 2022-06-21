@@ -1,5 +1,6 @@
 package refresh.onecake.member.adapter.api
 
+import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.http.HttpStatus
@@ -12,6 +13,7 @@ import refresh.onecake.member.application.SellerService
 import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
 
+@Api(tags = arrayOf(SwaggerNotes.SELLER_CONTROLLER_TAG), description = "입점 신청")
 @RestController
 @RequestMapping("/api/v1/seller")
 class SellerController (

@@ -3,6 +3,10 @@ package refresh.onecake.member.adapter.api
 class SwaggerNotes {
 
     companion object {
+        const val LOGIN_CONTROLLER_TAG = "Auth"
+        const val S3_IMAGE_CONTROLLER_TAG = "S3 Image Upload"
+        const val SELLER_CONTROLLER_TAG = "Seller"
+
         const val SIGNUP_MEMO =
         """ 
             NOTE

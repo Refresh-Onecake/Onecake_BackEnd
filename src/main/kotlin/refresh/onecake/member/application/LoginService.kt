@@ -31,6 +31,7 @@ class LoginService(
     private val consumerRepository: ConsumerRepository
 ) {
 
+    @Transactional
     fun signup(signUpRequestDto: SignUpRequestDto): SignUpResponseDto {
         if (memberRepository.existsByUserId(signUpRequestDto.userId)) {
             return SignUpResponseDto(false, "중복된 아이디 입니다.")
@@ -49,7 +50,6 @@ class LoginService(
         return SignUpResponseDto(true, "회원가입을 성공했습니다.")
     }
 
-    @Transactional
     fun giveRole(member: Member, role: MemberType) {
 
         if (role == MemberType.CONSUMER) {
