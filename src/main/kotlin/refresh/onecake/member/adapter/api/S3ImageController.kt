@@ -1,5 +1,6 @@
 package refresh.onecake.member.adapter.api
 
+import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.web.bind.annotation.PostMapping
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import refresh.onecake.member.application.S3Uploader
 
+@Api(tags = arrayOf(SwaggerNotes.S3_IMAGE_CONTROLLER_TAG), description = "프로필 사진 업로드")
 @RequestMapping("/api/v1/image")
 @RestController
 class S3ImageController (

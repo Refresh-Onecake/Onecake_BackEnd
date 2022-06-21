@@ -29,6 +29,4 @@ class Store(
 
     var kakaoChannelUrl: String?,
 
-    ) : BaseTimeEntity() {
-
-}
+) : BaseTimeEntity()

@@ -9,13 +9,14 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import refresh.onecake.member.adapter.api.SwaggerNotes.Companion.LOGIN_CONTROLLER_TAG
 import refresh.onecake.member.adapter.api.SwaggerNotes.Companion.LOGIN_MEMO
 import refresh.onecake.member.adapter.api.SwaggerNotes.Companion.REISSUE_MEMO
 import refresh.onecake.member.adapter.api.SwaggerNotes.Companion.SIGNUP_MEMO
 import refresh.onecake.member.adapter.api.dto.*
 import refresh.onecake.member.application.LoginService
 
-//@Api(tags = {"유저 인증"})
+@Api(tags = arrayOf(LOGIN_CONTROLLER_TAG), description = "회원가입, 로그인, 토큰 재발급")
 @RequestMapping("/api/v1/auth")
 @RestController
 class LoginController (

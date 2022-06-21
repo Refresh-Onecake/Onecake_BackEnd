@@ -18,6 +18,12 @@ class Menu (
 
     var menuImage: String?,
 
+    var price: Integer?,
+
+    var menuDescription: String?,
+
+
+
 
 
 ) : BaseTimeEntity()

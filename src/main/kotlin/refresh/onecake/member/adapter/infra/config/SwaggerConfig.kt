@@ -25,8 +25,8 @@ class SwaggerConfig {
 
     private fun apiInfo(): ApiInfo {
         return ApiInfoBuilder()
-            .title("Practice Swagger")
-            .description("practice swagger config")
+            .title("Onecake API Docs")
+            .description("Team Refresh")
             .version("1.0")
             .build()
     }
