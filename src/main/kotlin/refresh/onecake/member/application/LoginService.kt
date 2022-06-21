@@ -44,6 +44,8 @@ class LoginService (
             memberType = signUpRequestDto.memberType,
             profileImg = null
         )
+        memberRepository.save(member)
+
         if (signUpRequestDto.memberType == MemberType.CONSUMER) {
             var consumer = Consumer(
                 id = member.id
@@ -56,8 +58,6 @@ class LoginService (
             )
             sellerRepository.save(seller)
         }
-
-        memberRepository.save(member)
         return SignUpResponseDto(true, "회원가입을 성공했습니다.")
     }
 
