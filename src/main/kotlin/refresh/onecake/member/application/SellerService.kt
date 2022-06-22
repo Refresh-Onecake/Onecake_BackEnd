@@ -17,7 +17,48 @@ class SellerService (
     private val s3Uploader: S3Uploader
 ){
 
-    fun registerStore(image: MultipartFile, applyStoreRequestDto: ApplyStoreRequestDto) : DefaultResponseDto{
+//    fun registerStore(image: MultipartFile, applyStoreRequestDto: ApplyStoreRequestDto) : DefaultResponseDto{
+//        val id = SecurityUtil.getCurrentMemberId()
+////        println(memberRepository.findMemberTypeById(id))
+//        if (storeRepository.existsById(id)) {
+//            return DefaultResponseDto(false, "이미 입점한 판매자 입니다.")
+//        }
+////        else if (memberRepository.findById(id).) {
+////            return DefaultResponseDto(false, "판매자만 입점신청을 할 수 있습니다.")
+////        }
+//        else {
+//            val address = Address(
+//                id = id,
+//                jibunAddress = applyStoreRequestDto.address?.jibunAddress,
+//                roadFullAddr = applyStoreRequestDto.address?.roadFullAddr,
+//                siNm = applyStoreRequestDto.address?.siNm,
+//                sggNm = applyStoreRequestDto.address?.sggNm,
+//                emdNm = applyStoreRequestDto.address?.emdNm,
+//                lnbrMnnm = applyStoreRequestDto.address?.lnbrMnnm,
+//                addressDetail = applyStoreRequestDto.address?.addressDetail
+//            )
+//            addressRepository.save(address)
+//            val store = Store(
+//                id = id,
+//                storeName = applyStoreRequestDto.storeName,
+//                businessRegistrationNumber = applyStoreRequestDto.businessRegistrationNumber,
+//                address = address,
+//                storePhoneNumber = applyStoreRequestDto.storePhoneNumber,
+//                storeDiscription = applyStoreRequestDto.storeDiscription,
+//                openTime = applyStoreRequestDto.openTime,
+//                closeTime = applyStoreRequestDto.closeTime,
+//                kakaoChannelUrl = applyStoreRequestDto.kakaoChannelUrl,
+//                storeImage = s3Uploader.upload(image)
+//            )
+//            storeRepository.save(store)
+//            val seller = sellerRepository.getById(id)
+//            seller.store = store
+//            sellerRepository.save(seller)
+//            return DefaultResponseDto(true, "입점 신청을 완료하였습니다.")
+//        }
+//    }
+
+    fun registerStore(image: MultipartFile) : DefaultResponseDto{
         val id = SecurityUtil.getCurrentMemberId()
 //        println(memberRepository.findMemberTypeById(id))
         if (storeRepository.existsById(id)) {
@@ -29,25 +70,25 @@ class SellerService (
         else {
             val address = Address(
                 id = id,
-                jibunAddress = applyStoreRequestDto.address?.jibunAddress,
-                roadFullAddr = applyStoreRequestDto.address?.roadFullAddr,
-                siNm = applyStoreRequestDto.address?.siNm,
-                sggNm = applyStoreRequestDto.address?.sggNm,
-                emdNm = applyStoreRequestDto.address?.emdNm,
-                lnbrMnnm = applyStoreRequestDto.address?.lnbrMnnm,
-                addressDetail = applyStoreRequestDto.address?.addressDetail
+                jibunAddress = null,
+                roadFullAddr = null,
+                siNm = null,
+                sggNm = null,
+                emdNm = null,
+                lnbrMnnm = null,
+                addressDetail = null
             )
             addressRepository.save(address)
             val store = Store(
                 id = id,
-                storeName = applyStoreRequestDto.storeName,
-                businessRegistrationNumber = applyStoreRequestDto.businessRegistrationNumber,
+                storeName = null,
+                businessRegistrationNumber = null,
                 address = address,
-                storePhoneNumber = applyStoreRequestDto.storePhoneNumber,
-                storeDiscription = applyStoreRequestDto.storeDiscription,
-                openTime = applyStoreRequestDto.openTime,
-                closeTime = applyStoreRequestDto.closeTime,
-                kakaoChannelUrl = applyStoreRequestDto.kakaoChannelUrl,
+                storePhoneNumber = null,
+                storeDiscription = null,
+                openTime = null,
+                closeTime = null,
+                kakaoChannelUrl = null,
                 storeImage = s3Uploader.upload(image)
             )
             storeRepository.save(store)
