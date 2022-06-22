@@ -8,15 +8,15 @@ import javax.servlet.MultipartConfigElement
 
 class MultiPartConfig {
 
-    @Bean
-    fun multipartConfigElement(): MultipartConfigElement? {
-        return MultipartConfigElement("")
-    }
-
-    @Bean
-    fun multipartResolver(): MultipartResolver? {
-        val multipartResolver = CommonsMultipartResolver()
-        multipartResolver.setMaxUploadSize(10485759)
-        return multipartResolver
-    }
+//    @Bean
+//    fun multipartConfigElement(): MultipartConfigElement? {
+//        return MultipartConfigElement("")
+//    }
+//
+//    @Bean
+//    fun multipartResolver(): MultipartResolver? {
+//        val multipartResolver = CommonsMultipartResolver()
+//        multipartResolver.setMaxUploadSize(10485759)
+//        return multipartResolver
+//    }
 }
