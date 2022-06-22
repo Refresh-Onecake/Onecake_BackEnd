@@ -20,7 +20,13 @@ class SellerController (
 
     @ApiOperation(value = "입점 신청", notes = SwaggerNotes.REGISTER_STORE_MEMO)
     @PostMapping("/store")
-    fun registerStore(@RequestPart("image") image:MultipartFile, @RequestPart("applyStoreRequestDto") applyStoreRequestDto: ApplyStoreRequestDto): ResponseEntity<DefaultResponseDto> {
-        return ApiResponse.success(HttpStatus.OK, sellerService.registerStore(image, applyStoreRequestDto))
+    fun registerStore(@RequestBody applyStoreRequestDto: ApplyStoreRequestDto): ResponseEntity<DefaultResponseDto> {
+        return ApiResponse.success(HttpStatus.OK, sellerService.registerStore(applyStoreRequestDto))
+    }
+
+    @ApiOperation(value = "가게 이미지 업로드", notes = SwaggerNotes.REGISTER_STORE_MEMO)
+    @PostMapping("/store/image")
+    fun registerStoreImage(@RequestPart("image") image:MultipartFile): ResponseEntity<DefaultResponseDto> {
+        return ApiResponse.success(HttpStatus.OK, sellerService.registerStoreImage(image))
     }
 }
