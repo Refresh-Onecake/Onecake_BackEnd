@@ -18,15 +18,9 @@ class SellerController (
     private val sellerService: SellerService
 ){
 
-//    @ApiOperation(value = "입점 신청", notes = SwaggerNotes.REGISTER_STORE_MEMO)
-//    @PostMapping("/store", consumes = [MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE])
-//    fun registerStore(@RequestPart("image") image:MultipartFile, @RequestPart("applyStoreRequestDto") applyStoreRequestDto: ApplyStoreRequestDto): ResponseEntity<DefaultResponseDto> {
-//        return ApiResponse.success(HttpStatus.OK, sellerService.registerStore(image, applyStoreRequestDto))
-//    }
-
     @ApiOperation(value = "입점 신청", notes = SwaggerNotes.REGISTER_STORE_MEMO)
     @PostMapping("/store")
-    fun registerStore(@RequestPart("applyStoreRequestDto") applyStoreRequestDto: ApplyStoreRequestDto): ResponseEntity<DefaultResponseDto> {
-        return ApiResponse.success(HttpStatus.OK, sellerService.registerStore(applyStoreRequestDto))
+    fun registerStore(@RequestPart("image") image:MultipartFile, @RequestPart("applyStoreRequestDto") applyStoreRequestDto: ApplyStoreRequestDto): ResponseEntity<DefaultResponseDto> {
+        return ApiResponse.success(HttpStatus.OK, sellerService.registerStore(image, applyStoreRequestDto))
     }
 }
