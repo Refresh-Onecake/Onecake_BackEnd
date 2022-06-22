@@ -6,6 +6,7 @@ import refresh.onecake.member.adapter.api.dto.ApplyStoreRequestDto
 import refresh.onecake.member.adapter.api.dto.DefaultResponseDto
 import refresh.onecake.member.application.util.SecurityUtil
 import refresh.onecake.member.domain.member.MemberRepository
+import refresh.onecake.member.domain.member.MemberType
 import refresh.onecake.member.domain.seller.*
 
 @Service
@@ -19,9 +20,14 @@ class SellerService (
 
     fun registerStore(image: MultipartFile, applyStoreRequestDto: ApplyStoreRequestDto) : DefaultResponseDto{
         val id = SecurityUtil.getCurrentMemberId()
+//        println(memberRepository.findMemberTypeById(id))
         if (storeRepository.existsById(id)) {
             return DefaultResponseDto(false, "이미 입점한 판매자 입니다.")
-        } else {
+        }
+//        else if (memberRepository.findById(id).) {
+//            return DefaultResponseDto(false, "판매자만 입점신청을 할 수 있습니다.")
+//        }
+        else {
             val address = Address(
                 id = id,
                 jibunAddress = applyStoreRequestDto.address?.jibunAddress,
@@ -46,11 +52,14 @@ class SellerService (
                 storeImage = s3Uploader.upload(image)
             )
             storeRepository.save(store)
-            val seller = Seller(
-                id = id,
-                store = store
-            )
+            val seller = sellerRepository.getById(id)
+            seller.store = store
             sellerRepository.save(seller)
+//            val seller = Seller(
+//                id = id,
+//                store = store
+//            )
+//            sellerRepository.save(seller)
             return DefaultResponseDto(true, "입점 신청을 완료하였습니다.")
         }
     }

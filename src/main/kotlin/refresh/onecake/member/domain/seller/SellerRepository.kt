@@ -5,6 +5,4 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface SellerRepository: JpaRepository<Seller, Long> {
-//    fun findByUserId(userId:String): Seller?
-//    fun existsByUserId(suerId:String) : Boolean
 }
