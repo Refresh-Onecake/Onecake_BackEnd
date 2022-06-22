@@ -6,7 +6,6 @@ import refresh.onecake.member.adapter.api.dto.ApplyStoreRequestDto
 import refresh.onecake.member.adapter.api.dto.DefaultResponseDto
 import refresh.onecake.member.application.util.SecurityUtil
 import refresh.onecake.member.domain.member.MemberRepository
-import refresh.onecake.member.domain.member.MemberType
 import refresh.onecake.member.domain.seller.*
 
 @Service
@@ -55,11 +54,6 @@ class SellerService (
             val seller = sellerRepository.getById(id)
             seller.store = store
             sellerRepository.save(seller)
-//            val seller = Seller(
-//                id = id,
-//                store = store
-//            )
-//            sellerRepository.save(seller)
             return DefaultResponseDto(true, "입점 신청을 완료하였습니다.")
         }
     }
