@@ -58,7 +58,7 @@ class SellerService (
 //        }
 //    }
 
-    fun registerStore(image: MultipartFile) : DefaultResponseDto{
+    fun registerStore(applyStoreRequestDto: ApplyStoreRequestDto) : DefaultResponseDto{
         val id = SecurityUtil.getCurrentMemberId()
 //        println(memberRepository.findMemberTypeById(id))
         if (storeRepository.existsById(id)) {
@@ -70,26 +70,26 @@ class SellerService (
         else {
             val address = Address(
                 id = id,
-                jibunAddress = null,
-                roadFullAddr = null,
-                siNm = null,
-                sggNm = null,
-                emdNm = null,
-                lnbrMnnm = null,
-                addressDetail = null
+                jibunAddress = applyStoreRequestDto.address?.jibunAddress,
+                roadFullAddr = applyStoreRequestDto.address?.roadFullAddr,
+                siNm = applyStoreRequestDto.address?.siNm,
+                sggNm = applyStoreRequestDto.address?.sggNm,
+                emdNm = applyStoreRequestDto.address?.emdNm,
+                lnbrMnnm = applyStoreRequestDto.address?.lnbrMnnm,
+                addressDetail = applyStoreRequestDto.address?.addressDetail
             )
             addressRepository.save(address)
             val store = Store(
                 id = id,
-                storeName = null,
-                businessRegistrationNumber = null,
+                storeName = applyStoreRequestDto.storeName,
+                businessRegistrationNumber = applyStoreRequestDto.businessRegistrationNumber,
                 address = address,
-                storePhoneNumber = null,
-                storeDiscription = null,
-                openTime = null,
-                closeTime = null,
-                kakaoChannelUrl = null,
-                storeImage = s3Uploader.upload(image)
+                storePhoneNumber = applyStoreRequestDto.storePhoneNumber,
+                storeDiscription = applyStoreRequestDto.storeDiscription,
+                openTime = applyStoreRequestDto.openTime,
+                closeTime = applyStoreRequestDto.closeTime,
+                kakaoChannelUrl = applyStoreRequestDto.kakaoChannelUrl,
+                storeImage = null
             )
             storeRepository.save(store)
             val seller = sellerRepository.getById(id)
