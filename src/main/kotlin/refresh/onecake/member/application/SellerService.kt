@@ -48,7 +48,7 @@ class SellerService (
                 openTime = applyStoreRequestDto.openTime,
                 closeTime = applyStoreRequestDto.closeTime,
                 kakaoChannelUrl = applyStoreRequestDto.kakaoChannelUrl,
-                storeImage = null
+                storeImage = applyStoreRequestDto.storeImage
             )
             storeRepository.save(store)
             val seller = sellerRepository.getById(id)
@@ -56,12 +56,5 @@ class SellerService (
             sellerRepository.save(seller)
             return DefaultResponseDto(true, "입점 신청을 완료하였습니다.")
         }
-    }
-
-    fun registerStoreImage(multipartFile: MultipartFile): DefaultResponseDto {
-        val id = SecurityUtil.getCurrentMemberId()
-        val store = storeRepository.getById(id)
-        store.storeImage = s3Uploader.upload(multipartFile)
-        return DefaultResponseDto(true, "가게의 이미지 등록을 성공하였습니다.")
     }
 }

@@ -24,9 +24,5 @@ class SellerController (
         return ApiResponse.success(HttpStatus.OK, sellerService.registerStore(applyStoreRequestDto))
     }
 
-    @ApiOperation(value = "가게 이미지 업로드", notes = SwaggerNotes.REGISTER_STORE_MEMO)
-    @PostMapping("/store/image")
-    fun registerStoreImage(@RequestPart("image") image:MultipartFile): ResponseEntity<DefaultResponseDto> {
-        return ApiResponse.success(HttpStatus.OK, sellerService.registerStoreImage(image))
-    }
+
 }
