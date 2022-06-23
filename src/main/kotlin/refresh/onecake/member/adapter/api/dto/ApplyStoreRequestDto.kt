@@ -13,5 +13,6 @@ data class ApplyStoreRequestDto (
     var storeDiscription: String?,
     var openTime: String?,
     var closeTime: String?,
-    var kakaoChannelUrl: String?
+    var kakaoChannelUrl: String?,
+    var storeImage: String?,
 )

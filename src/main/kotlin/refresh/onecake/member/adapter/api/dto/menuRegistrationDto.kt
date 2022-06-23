@@ -5,5 +5,6 @@ data class menuRegistrationDto(
     var cakePrice: String?,
     var cakeDescription: String?,
     var cakeTaste: String?,
-    var consumerInput: List<ConsumerInputDto>
+    var consumerInputs: List<ConsumerInputDto>?,
+    var cakeInputs: List<ConsumerInputDto>?
 )
