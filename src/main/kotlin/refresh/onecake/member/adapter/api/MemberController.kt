@@ -15,19 +15,8 @@ import refresh.onecake.member.application.S3Uploader
 @RestController
 @RequestMapping("/api/v1/member")
 class MemberController (
-//    private val s3Uploader: S3Uploader
     private val memberInfo: MemberInfo
 ){
-
-//    @PostMapping("/password")
-//    fun resetPassword():
-
-//    @PostMapping("/profile")
-//    @Operation(summary = "AWS S3에 프로필 이미지 업로드")
-//    @ApiOperation(value = "AWS S3에 프로필 이미지 업로드")
-//    fun fileUpload(@RequestParam("image") multipartFile: MultipartFile): String {
-//        return s3Uploader.upload(multipartFile)
-//    }
 
     @ApiOperation(value = "이미지 업로드")
     @PostMapping("/image")
