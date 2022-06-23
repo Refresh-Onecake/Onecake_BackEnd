@@ -14,11 +14,8 @@ class MemberInfo (
     private val s3Uploader: S3Uploader
 ){
 
-    fun registerImage(multipartFile: MultipartFile): DefaultResponseDto {
-        val id = SecurityUtil.getCurrentMemberId()
-        val store = storeRepository.getById(id)
-        store.storeImage = s3Uploader.upload(multipartFile)
-        return DefaultResponseDto(true, "이미지 등록을 성공하였습니다.")
+    fun registerImage(multipartFile: MultipartFile): String {
+        return s3Uploader.upload(multipartFile)
     }
 
 }
