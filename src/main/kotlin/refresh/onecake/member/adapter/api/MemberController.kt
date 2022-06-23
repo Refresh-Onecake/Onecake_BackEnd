@@ -31,7 +31,7 @@ class MemberController (
 
     @ApiOperation(value = "이미지 업로드")
     @PostMapping("/image")
-    fun registerStoreImage(@RequestPart("image") image:MultipartFile): ResponseEntity<DefaultResponseDto> {
-        return ApiResponse.success(HttpStatus.OK, memberInfo.registerImage(image))
+    fun registerStoreImage(@RequestPart("image") image:MultipartFile): String {
+        return memberInfo.registerImage(image)
     }
 }
