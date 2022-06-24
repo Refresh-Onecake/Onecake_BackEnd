@@ -2,19 +2,23 @@ package refresh.onecake.member.application
 
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import refresh.onecake.member.adapter.api.dto.ApplyMenuDto
 import refresh.onecake.member.adapter.api.dto.ApplyStoreRequestDto
 import refresh.onecake.member.adapter.api.dto.DefaultResponseDto
 import refresh.onecake.member.application.util.SecurityUtil
+import refresh.onecake.member.domain.common.Question
+import refresh.onecake.member.domain.common.QuestionRepository
 import refresh.onecake.member.domain.member.MemberRepository
 import refresh.onecake.member.domain.seller.*
+import java.time.LocalDate
 
 @Service
 class SellerService (
-    private val memberRepository: MemberRepository,
     private val storeRepository: StoreRepository,
     private val addressRepository: AddressRepository,
     private val sellerRepository: SellerRepository,
-    private val s3Uploader: S3Uploader
+    private val menuRepository: MenuRepository,
+    private val questionRepository: QuestionRepository
 ){
 
     fun registerStore(applyStoreRequestDto: ApplyStoreRequestDto) : DefaultResponseDto{
@@ -56,5 +60,43 @@ class SellerService (
             sellerRepository.save(seller)
             return DefaultResponseDto(true, "입점 신청을 완료하였습니다.")
         }
+    }
+
+    fun registerMenu(applyMenuDto: ApplyMenuDto): DefaultResponseDto {
+
+        val id = SecurityUtil.getCurrentMemberId()
+        val menu = Menu(
+            store = storeRepository.getById(id),
+            menuSize = applyMenuDto.cakeSize,
+            image = mutableListOf(applyMenuDto.cakeImage),
+            price = applyMenuDto.cakePrice,
+            menuDescription = applyMenuDto.cakeDescription,
+            taste = applyMenuDto.cakeTaste,
+            keyword = Keyword.DISCHARGE
+        )
+        val savedMenu = menuRepository.save(menu)
+
+        if (applyMenuDto.consumerInput?.isNotEmpty() == true) {
+            for (i in 0 until applyMenuDto.consumerInput!!.size){
+                var question = Question(
+                    menuId = savedMenu.id,
+                    question = applyMenuDto.consumerInput!![i],
+                    isConsumerInput = true
+                )
+                questionRepository.save(question)
+            }
+        }
+        if (applyMenuDto.cakeInput?.isNotEmpty() == true) {
+            for (i in 0 until applyMenuDto.cakeInput!!.size){
+                var question = Question(
+                    menuId = savedMenu.id,
+                    question = applyMenuDto.cakeInput!![i],
+                    isConsumerInput = false
+                )
+                questionRepository.save(question)
+            }
+        }
+
+        return DefaultResponseDto(true, "메뉴 등록을 완료하였습니다.")
     }
 }
