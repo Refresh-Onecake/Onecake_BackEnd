@@ -7,6 +7,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
+import refresh.onecake.member.adapter.api.dto.ApplyMenuDto
 import refresh.onecake.member.adapter.api.dto.ApplyStoreRequestDto
 import refresh.onecake.member.adapter.api.dto.DefaultResponseDto
 import refresh.onecake.member.application.SellerService
@@ -24,5 +25,10 @@ class SellerController (
         return ApiResponse.success(HttpStatus.OK, sellerService.registerStore(applyStoreRequestDto))
     }
 
+    @ApiOperation(value = "메뉴 등록")
+    @PostMapping("/store/menu")
+    fun registerMenu(@RequestBody applyMenuDto: ApplyMenuDto): ResponseEntity<DefaultResponseDto> {
+        return ApiResponse.success(HttpStatus.OK, sellerService.registerMenu(applyMenuDto))
+    }
 
 }

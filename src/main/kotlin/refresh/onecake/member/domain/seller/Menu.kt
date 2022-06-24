@@ -14,16 +14,18 @@ class Menu (
     @JoinColumn(name="store_id")
     var store: Store,
 
-    var menuName: String?,
+    var menuSize: String?,
 
-    var menuImage: String?,
+    @ElementCollection
+    var image: MutableList<String>?,
 
-    var price: Integer?,
+    @Enumerated(value = EnumType.STRING)
+    var keyword: Keyword?,
+
+    var price: Int?,
 
     var menuDescription: String?,
 
-
-
-
+    var taste: String?
 
 ) : BaseTimeEntity()
