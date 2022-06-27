@@ -3,6 +3,7 @@ package refresh.onecake.member.domain.common
 import javax.persistence.*
 
 @Entity
+@Table(indexes = [Index(name = "index_menu_id", columnList = "menuId")])
 class Question (
 
     @Id

@@ -1,13 +1,10 @@
 package refresh.onecake.member.domain.common
 
 import refresh.onecake.member.domain.BaseTimeEntity
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
+import javax.persistence.*
 
 @Entity
-class Order (
+class OrderHistory (
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,6 +16,7 @@ class Order (
 
     var menuId:Long,
 
+    @Enumerated(value = EnumType.STRING)
     var state:OrderState,
 
 ) : BaseTimeEntity()
