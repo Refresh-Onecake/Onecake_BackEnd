@@ -23,13 +23,9 @@ class SellerService (
 
     fun registerStore(applyStoreRequestDto: ApplyStoreRequestDto) : DefaultResponseDto{
         val id = SecurityUtil.getCurrentMemberId()
-//        println(memberRepository.findMemberTypeById(id))
         if (storeRepository.existsById(id)) {
             return DefaultResponseDto(false, "이미 입점한 판매자 입니다.")
         }
-//        else if (memberRepository.findById(id).) {
-//            return DefaultResponseDto(false, "판매자만 입점신청을 할 수 있습니다.")
-//        }
         else {
             val address = Address(
                 id = id,
@@ -62,17 +58,21 @@ class SellerService (
         }
     }
 
+    //TODO : menu에 image 추가
     fun registerMenu(applyMenuDto: ApplyMenuDto): DefaultResponseDto {
 
         val id = SecurityUtil.getCurrentMemberId()
+//        if (menuRepository.existsByMenuSize(applyMenuDto.cakeSize)) {
+//            return DefaultResponseDto(false, "이미 등록한 케이크 사이즈입니다.")
+//        }
         val menu = Menu(
             store = storeRepository.getById(id),
+            menuName = applyMenuDto.cakeSize + " 커스텀 케이크",
             menuSize = applyMenuDto.cakeSize,
-            image = mutableListOf(applyMenuDto.cakeImage),
+//            image = mutableListOf(applyMenuDto.cakeImage),
             price = applyMenuDto.cakePrice,
             menuDescription = applyMenuDto.cakeDescription,
-            taste = applyMenuDto.cakeTaste,
-            keyword = Keyword.DISCHARGE
+            taste = applyMenuDto.cakeTaste
         )
         val savedMenu = menuRepository.save(menu)
 

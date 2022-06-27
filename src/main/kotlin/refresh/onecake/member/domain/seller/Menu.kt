@@ -14,13 +14,10 @@ class Menu (
     @JoinColumn(name="store_id")
     var store: Store,
 
+    var menuName: String?,
+
     var menuSize: String?,
 
-    @ElementCollection
-    var image: MutableList<String>?,
-
-    @Enumerated(value = EnumType.STRING)
-    var keyword: Keyword?,
 
     var price: Int?,
 
