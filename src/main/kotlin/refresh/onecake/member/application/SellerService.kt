@@ -1,10 +1,9 @@
 package refresh.onecake.member.application
 
+import org.modelmapper.ModelMapper
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
-import refresh.onecake.member.adapter.api.dto.ApplyMenuDto
-import refresh.onecake.member.adapter.api.dto.ApplyStoreRequestDto
-import refresh.onecake.member.adapter.api.dto.DefaultResponseDto
+import refresh.onecake.member.adapter.api.dto.*
 import refresh.onecake.member.application.util.SecurityUtil
 import refresh.onecake.member.domain.common.Question
 import refresh.onecake.member.domain.common.QuestionRepository
@@ -18,7 +17,8 @@ class SellerService (
     private val addressRepository: AddressRepository,
     private val sellerRepository: SellerRepository,
     private val menuRepository: MenuRepository,
-    private val questionRepository: QuestionRepository
+    private val questionRepository: QuestionRepository,
+    private val modelMapper: ModelMapper
 ){
 
     fun registerStore(applyStoreRequestDto: ApplyStoreRequestDto) : DefaultResponseDto{
@@ -98,5 +98,10 @@ class SellerService (
         }
 
         return DefaultResponseDto(true, "메뉴 등록을 완료하였습니다.")
+    }
+
+    fun getMenus() : List<StoreMenuListDto>{
+        val id = SecurityUtil.getCurrentMemberId()
+        return menuRepository.findAllByStoreIdOrderByMenuNameAsc(id).map{ modelMapper.map(it, StoreMenuListDto::class.java) }
     }
 }
