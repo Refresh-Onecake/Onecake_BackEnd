@@ -5,8 +5,11 @@ import org.springframework.stereotype.Service
 import refresh.onecake.member.adapter.api.dto.*
 import refresh.onecake.member.application.util.SecurityUtil
 import refresh.onecake.member.domain.common.*
+import refresh.onecake.member.domain.consumer.StoreLike
+import refresh.onecake.member.domain.consumer.StoreLikeRepository
 import refresh.onecake.member.domain.member.MemberRepository
 import refresh.onecake.member.domain.seller.AddressRepository
+import refresh.onecake.member.domain.seller.DayOffRepository
 import refresh.onecake.member.domain.seller.MenuRepository
 import refresh.onecake.member.domain.seller.StoreRepository
 
@@ -19,16 +22,20 @@ class ConsumerService (
     private val questionRepository: QuestionRepository,
     private val orderHistoryRepository: OrderHistoryRepository,
     private val orderSheetRepository: OrderSheetRepository,
+    private val dayOffRepository: DayOffRepository,
+    private val storeLikeRepository: StoreLikeRepository,
     private val modelMapper: ModelMapper
 ){
 
     fun storeMainInfo(storeId:Long): StoreMainInfoDto {
+        val id = SecurityUtil.getCurrentMemberId()
         val store = storeRepository.getById(storeId)
-        return StoreMainInfoDto(storeImage = store.storeImage,
-                                storeName = store.storeName,
-                                storeDescription = store.storeDiscription,
-                                likedNum = 0,
-                                reviewNum = 0)
+        return StoreMainInfoDto(
+            storeImage = store.storeImage,
+            storeName = store.storeName,
+            storeDescription = store.storeDiscription,
+            isLiked = storeLikeRepository.existsByMemberIdAndStoreId(id, storeId)
+        )
     }
 
     fun storeMenuList(storeId: Long): List<StoreMenuListDto>? {
@@ -46,9 +53,12 @@ class ConsumerService (
         )
     }
 
-    fun getCakesSize(storeId: Long): List<MenuIdAndSizeDto>?{
-        return menuRepository.findAllIdAndMenuSizeByStoreIdOrderByMenuSizeAsc(storeId)
-            ?.map{modelMapper.map(it, MenuIdAndSizeDto::class.java)}
+    fun getCakesSize(storeId: Long): StoreNameAndCakeSizesDto{
+        return StoreNameAndCakeSizesDto(
+            storeName = storeRepository.findStoreById(storeId).storeName,
+            sizes = menuRepository.findAllIdAndMenuSizeByStoreIdOrderByMenuSizeAsc(storeId)
+                ?.map{modelMapper.map(it, MenuIdAndSizeDto::class.java)}
+        )
     }
 
     fun getOrderSheet(storeId: Long, menuId: Long): OrderSheetTwoTypeDto? {
@@ -61,13 +71,21 @@ class ConsumerService (
         )
     }
 
-    fun postOrderSheet(storeId: Long, menuId: Long, answersDto: AnswersDto?): DefaultResponseDto {
+    fun getStoreDayOffs(storeId: Long) : List<String>? {
+        return dayOffRepository.findAllByStoreId(storeId)?.map { it.day }
+    }
+
+    fun postOrderSheet(storeId: Long, menuId: Long, answersDto: AnswersDto): DefaultResponseDto {
         val id = SecurityUtil.getCurrentMemberId()
         val orderHistory = OrderHistory(
             userId = id,
             storeId = storeId,
             menuId = menuId,
-            state = OrderState.RECEIVED
+            state = OrderState.RECEIVED,
+            pickUpDay = answersDto.answers[0],
+            pickUpTime = answersDto.answers[1],
+            memo = null,
+            reasonForCanceled = null,
         )
         val savedOrderHistory = orderHistoryRepository.save(orderHistory)
 
@@ -88,5 +106,20 @@ class ConsumerService (
 
         return DefaultResponseDto(true, member + "님의 주문이 성공적으로 접수되었습니다!")
 
+    }
+
+    fun pushStoreLike(storeId:Long): DefaultResponseDto {
+        val id = SecurityUtil.getCurrentMemberId()
+        val storeLike = storeLikeRepository.findStoreLikeByMemberIdAndStoreId(id, storeId)
+        return if (storeLike != null) {
+            storeLikeRepository.delete(storeLike)
+            DefaultResponseDto(true,"가게 좋아요를 취소하였습니다.")
+        } else {
+            storeLikeRepository.save(StoreLike(
+                memberId = id,
+                storeId = storeId
+            ))
+            DefaultResponseDto(true, "가게 좋아요를 추가하였습니다.")
+        }
     }
 }

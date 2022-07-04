@@ -9,9 +9,9 @@ class Image (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = -1L,
 
-    @ManyToOne(targetEntity=Menu::class, fetch= FetchType.LAZY)
-    @JoinColumn(name="menu_id")
-    var menu: Menu,
+    var menuId: Long,
+
+    var image: String,
 
     @Enumerated(value = EnumType.STRING)
     var keyword: Keyword?,
