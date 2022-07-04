@@ -19,6 +19,12 @@ class ConsumerController (
         return ApiResponse.success(HttpStatus.OK, consumerService.storeMainInfo(storeId))
     }
 
+    @ApiOperation(value = "소비자 - 상세 가게 페이지 - 좋아요/취소 ")
+    @PostMapping("stores/{storeId}/like")
+    fun pushStoreLike(@PathVariable storeId: Long): ResponseEntity<DefaultResponseDto> {
+        return ApiResponse.success(HttpStatus.OK, consumerService.pushStoreLike(storeId))
+    }
+
     @ApiOperation(value = "소비자 - 상세 가게 페이지 - 아랫부분 - 메뉴 ")
     @GetMapping("stores/{storeId}/menuList")
     fun storeMenuList(@PathVariable storeId:Long): ResponseEntity<List<StoreMenuListDto>?> {
@@ -33,7 +39,7 @@ class ConsumerController (
 
     @ApiOperation(value = "소비자 - 주문하기 - 케잌사이즈들 ")
     @GetMapping("stores/{storeId}/order/cakesize")
-    fun getCakesSize(@PathVariable storeId: Long): ResponseEntity<List<MenuIdAndSizeDto>?> {
+    fun getCakesSize(@PathVariable storeId: Long): ResponseEntity<StoreNameAndCakeSizesDto> {
         return ApiResponse.success(HttpStatus.OK, consumerService.getCakesSize(storeId))
     }
 
@@ -43,13 +49,20 @@ class ConsumerController (
         return ApiResponse.success(HttpStatus.OK, consumerService.getOrderSheet(storeId, menuId))
     }
 
+    @ApiOperation(value = "소비자 - 주문하기 - GET 가게의 휴무일 ")
+    @GetMapping("stores/{storeId}/order/dayOff")
+    fun getStoreDayOffs(@PathVariable storeId: Long): ResponseEntity<List<String>?> {
+        return ApiResponse.success(HttpStatus.OK, consumerService.getStoreDayOffs(storeId))
+    }
+
     @ApiOperation(value = "소비자 - 주문하기 - POST 주문서 질문의 대답 ")
     @PostMapping("stores/{storeId}/order/{menuId}")
     fun postOrderSheet(
         @PathVariable storeId: Long,
         @PathVariable menuId: Long,
-        @RequestBody answersDto: AnswersDto?
+        @RequestBody answersDto: AnswersDto
     ): ResponseEntity<DefaultResponseDto> {
         return ApiResponse.success(HttpStatus.OK, consumerService.postOrderSheet(storeId, menuId, answersDto))
     }
+
 }

@@ -14,15 +14,16 @@ class Menu (
     @JoinColumn(name="store_id")
     var store: Store,
 
-    var menuName: String?,
+    var menuName: String,
 
     var menuSize: String?,
 
+    var price: Int,
 
-    var price: Int?,
+    var menuDescription: String,
 
-    var menuDescription: String?,
+    var taste: String?,
 
-    var taste: String?
+    var image: String
 
 ) : BaseTimeEntity()

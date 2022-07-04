@@ -19,4 +19,12 @@ class OrderHistory (
     @Enumerated(value = EnumType.STRING)
     var state:OrderState,
 
+    var pickUpDay: String,
+
+    var pickUpTime: String,
+
+    var memo: String?,
+
+    var reasonForCanceled: String?,
+
 ) : BaseTimeEntity()

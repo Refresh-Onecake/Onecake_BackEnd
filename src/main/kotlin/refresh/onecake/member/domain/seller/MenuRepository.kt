@@ -6,10 +6,8 @@ import refresh.onecake.member.adapter.api.dto.MenuIdAndSizeDto
 
 @Repository
 interface MenuRepository : JpaRepository<Menu, Long>{
-
+    fun findMenuById(id: Long): Menu
     fun findAllByStoreIdOrderByMenuNameAsc(id:Long): List<Menu>
-    fun getIdByStoreId(id:Long): Long
-    fun existsByMenuSize(menuSize: String): Boolean
     fun findAllByStoreIdOrderByMenuSizeAsc(storeId: Long): List<Menu>?
     fun findAllIdAndMenuSizeByStoreIdOrderByMenuSizeAsc(storeId: Long): List<MenuIdAndSizeDto>?
 }
