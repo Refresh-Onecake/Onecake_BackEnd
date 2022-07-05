@@ -184,16 +184,15 @@ class SellerService (
         val menu = menuRepository.findMenuById(order.menuId)
         val orderSheet = orderSheetRepository.findAllByOrderId(orderId)
         val answers = orderSheet?.map { it.answer }
-        var questions: MutableList<String>? = mutableListOf()
+        var forms: MutableList<String>? = mutableListOf()
         for (i in orderSheet?.indices!!) {
-            questions?.add(i, questionRepository.findQuestionById(orderSheet[i].questionId).question + " : " + answers?.get(i))
+            forms?.add(i, questionRepository.findQuestionById(orderSheet[i].questionId).question + " : " + answers?.get(i))
         }
         return SpecificOrderForm(
             menuName = menu.menuName,
             price = menu.price,
             state = order.state,
-            questions = questions,
-            answers = answers,
+            form = forms,
             memo = order.memo
         )
     }
