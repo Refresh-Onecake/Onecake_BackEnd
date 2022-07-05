@@ -4,6 +4,8 @@ import org.modelmapper.ModelMapper
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import refresh.onecake.member.adapter.api.dto.*
+import refresh.onecake.member.adapter.infra.ForbiddenException
+import refresh.onecake.member.adapter.infra.jwt.JwtAccessDeniedHandler
 import refresh.onecake.member.application.util.SecurityUtil
 import refresh.onecake.member.domain.common.*
 import refresh.onecake.member.domain.member.MemberRepository
@@ -66,9 +68,9 @@ class SellerService (
     fun registerMenu(applyMenuDto: ApplyMenuDto): DefaultResponseDto {
 
         val id = SecurityUtil.getCurrentMemberId()
-//        if (menuRepository.existsByMenuSize(applyMenuDto.cakeSize)) {
-//            return DefaultResponseDto(false, "이미 등록한 케이크 사이즈입니다.")
-//        }
+        if (menuRepository.existsByMenuSize(applyMenuDto.cakeSize)) {
+            return DefaultResponseDto(false, "이미 등록한 케이크 사이즈입니다.")
+        }
         val menu = Menu(
             store = storeRepository.getById(id),
             menuName = applyMenuDto.cakeSize + " 커스텀 케이크",
@@ -180,7 +182,11 @@ class SellerService (
     }
 
     fun getSpecificOrder(orderId: Long) : SpecificOrderForm{
-        val order = orderHistoryRepository.findOrderHistoryById(orderId)
+        val id = SecurityUtil.getCurrentMemberId()
+        var order = orderHistoryRepository.findOrderHistoryById(orderId)
+        if (order.storeId != id) {
+            throw ForbiddenException("요청을 보내는 유저는 해당 주문서의 판매자가 아닙니다.")
+        }
         val menu = menuRepository.findMenuById(order.menuId)
         val orderSheet = orderSheetRepository.findAllByOrderId(orderId)
         val answers = orderSheet?.map { it.answer }
@@ -198,14 +204,23 @@ class SellerService (
     }
 
     fun postMemo(orderId: Long, memo:Memo): DefaultResponseDto {
+        val id = SecurityUtil.getCurrentMemberId()
         var order = orderHistoryRepository.findOrderHistoryById(orderId)
+        if (order.storeId != id) {
+            throw ForbiddenException("메모를 등록하려는 유저는 해당 주문서의 판매자가 아닙니다.")
+        }
         order.memo = memo.memo
         orderHistoryRepository.save(order)
         return DefaultResponseDto(true, "메모를 저장하였습니다.")
     }
 
     fun changeOrderState(orderId: Long): DefaultResponseDto {
+        val id = SecurityUtil.getCurrentMemberId()
         var order = orderHistoryRepository.findOrderHistoryById(orderId)
+        if (order.storeId != id) {
+            throw ForbiddenException("주문서 상태 변경을 시도하는 유저는 해당 주문서의 판매자가 아닙니다.")
+        }
+
         if (order.state == OrderState.RECEIVED) {
             order.state = OrderState.ACCEPTED
         } else if (order.state == OrderState.ACCEPTED) {
@@ -223,7 +238,12 @@ class SellerService (
     }
 
     fun orderStateToCanceled(orderId: Long, cancelReason: CancelReason): DefaultResponseDto {
+        val id = SecurityUtil.getCurrentMemberId()
         val order = orderHistoryRepository.findOrderHistoryById(orderId)
+        if (order.storeId != id) {
+            throw ForbiddenException("주문서 상태 변경을 시도하는 유저는 해당 주문서의 판매자가 아닙니다.")
+        }
+
         order.state = OrderState.CANCELED
         order.reasonForCanceled = cancelReason.reason
         orderHistoryRepository.save(order)
