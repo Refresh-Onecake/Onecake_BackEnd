@@ -160,8 +160,8 @@ class SellerService (
         )
     }
 
-    fun convertOrderHistoryToMenuDetail(orderHistory: List<OrderHistory>): MutableList<MenuThumbNail>?{
-        var output: MutableList<MenuThumbNail>? = null
+    fun convertOrderHistoryToMenuDetail(orderHistory: List<OrderHistory>): List<MenuThumbNail>?{
+        var output: MutableList<MenuThumbNail>? = mutableListOf()
         for (i in orderHistory.indices) {
             var menu = menuRepository.findMenuById(orderHistory[i].menuId)
             println(menu.menuName)
@@ -176,17 +176,17 @@ class SellerService (
             ))
             println(output?.get(i)?.id)
         }
-        return output
+        return output?.toList()
     }
 
     fun getSpecificOrder(orderId: Long) : SpecificOrderForm{
         val order = orderHistoryRepository.findOrderHistoryById(orderId)
         val menu = menuRepository.findMenuById(order.menuId)
         val orderSheet = orderSheetRepository.findAllByOrderId(orderId)
-        val answers = orderSheet.map { it.answer }
-        var questions: MutableList<String>? = null
-        for (i in orderSheet.indices) {
-            questions?.set(i, questionRepository.findQuestionById(orderSheet[i].questionId))
+        val answers = orderSheet?.map { it.answer }
+        var questions: MutableList<String>? = mutableListOf()
+        for (i in orderSheet?.indices!!) {
+            questions?.add(i, questionRepository.findQuestionById(orderSheet[i].questionId).question + " : " + answers?.get(i))
         }
         return SpecificOrderForm(
             menuName = menu.menuName,
