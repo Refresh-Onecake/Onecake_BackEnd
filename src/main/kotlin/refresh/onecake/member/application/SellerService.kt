@@ -197,7 +197,7 @@ class SellerService (
         return SpecificOrderForm(
             menuName = menu.menuName,
             price = menu.price,
-            state = order.state,
+            state = order.state.toString().lowercase(),
             form = forms,
             memo = order.memo
         )
