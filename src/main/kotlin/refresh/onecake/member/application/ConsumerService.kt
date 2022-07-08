@@ -122,4 +122,27 @@ class ConsumerService (
             DefaultResponseDto(true, "가게 좋아요를 추가하였습니다.")
         }
     }
+
+    fun getAllStoreByAddress(address: String): List<StoreThumbNail>? {
+        var addressId: List<Long>? = addressRepository.findAllIdBySggNm(address)
+        var output: MutableList<StoreThumbNail> = mutableListOf()
+        for (i in addressId?.indices!!) {
+            var store = storeRepository.findByAddressId(addressId[i])
+            output[i] = StoreThumbNail(
+                storeImage = store.storeImage,
+                guName = addressRepository.getById(addressId!![i]).sggNm!!,
+                storeName = store.storeName,
+                likedNum = storeLikeRepository.countByStoreId(store.id)
+            )
+        }
+        return output
+//        var stores: MutableList<StoreThumbNail> = mutableListOf()
+//        for (i in addressId?.indices!!) {
+//            var store = storeRepository.findStoreById(addressId[i])
+//            stores[i] = StoreThumbNail(
+//                storeImage = store.storeImage,
+//                guName =
+//            )
+//        }
+    }
 }
