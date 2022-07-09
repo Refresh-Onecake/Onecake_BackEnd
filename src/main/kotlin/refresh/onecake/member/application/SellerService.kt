@@ -68,9 +68,9 @@ class SellerService (
     fun registerMenu(applyMenuDto: ApplyMenuDto): DefaultResponseDto {
 
         val id = SecurityUtil.getCurrentMemberId()
-        if (menuRepository.existsByMenuSize(applyMenuDto.cakeSize)) {
-            return DefaultResponseDto(false, "이미 등록한 케이크 사이즈입니다.")
-        }
+//        if (menuRepository.existsByMenuSize(applyMenuDto.cakeSize)) {
+//            return DefaultResponseDto(false, "이미 등록한 케이크 사이즈입니다.")
+//        }
         val menu = Menu(
             store = storeRepository.getById(id),
             menuName = applyMenuDto.cakeSize + " 커스텀 케이크",

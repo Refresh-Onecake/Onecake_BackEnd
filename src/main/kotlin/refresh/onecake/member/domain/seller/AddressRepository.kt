@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface AddressRepository : JpaRepository<Address, Long>{
-    fun findAllIdBySggNm(sggNm: String): List<Long>?
+    fun findAllBySggNm(sggNm: String): List<Address>?
 
 }

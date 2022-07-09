@@ -4,5 +4,6 @@ data class StoreThumbNail(
     var storeImage: String,
     var guName: String,
     var storeName: String,
-    var likedNum: Long
+    var likedNum: Long,
+    var isLiked: Boolean
 )
