@@ -123,18 +123,21 @@ class ConsumerService (
         }
     }
 
-    fun getAllStoreByAddress(address: String): List<StoreThumbNail>? {
-        var addressId: List<Long>? = addressRepository.findAllIdBySggNm(address)
+    fun getAllStoreByAddressRangedByPopularity(address: String): List<StoreThumbNail>? {
+        val id = SecurityUtil.getCurrentMemberId()
+        var addressId: List<Long>? = addressRepository.findAllBySggNm(address)?.map { it.id }
         var output: MutableList<StoreThumbNail> = mutableListOf()
         for (i in addressId?.indices!!) {
             var store = storeRepository.findByAddressId(addressId[i])
-            output[i] = StoreThumbNail(
+            output.add(StoreThumbNail(
                 storeImage = store.storeImage,
                 guName = addressRepository.getById(addressId!![i]).sggNm!!,
                 storeName = store.storeName,
-                likedNum = storeLikeRepository.countByStoreId(store.id)
-            )
+                likedNum = storeLikeRepository.countByStoreId(store.id),
+                isLiked = storeLikeRepository.existsByMemberIdAndStoreId(id, store.id)
+            ))
         }
+        output.sortByDescending { it.likedNum }
         return output
 //        var stores: MutableList<StoreThumbNail> = mutableListOf()
 //        for (i in addressId?.indices!!) {
