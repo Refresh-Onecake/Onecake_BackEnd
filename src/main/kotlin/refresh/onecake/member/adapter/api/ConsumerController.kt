@@ -66,9 +66,9 @@ class ConsumerController (
     }
 
     @ApiOperation(value = "소비자 - 가게 탭 (해당 지역의 모든 가게 보기) & 인기순 ")
-    @GetMapping("stores/main/{address}")
-    fun getAllStoreByAddress(@PathVariable address: String): ResponseEntity<List<StoreThumbNail>?> {
-        return ApiResponse.success(HttpStatus.OK, consumerService.getAllStoreByAddressRangedByPopularity(address))
+    @GetMapping("stores/main")
+    fun getAllStoreByAddress(@RequestBody addressAndFilter: AddressAndFilter): ResponseEntity<List<StoreThumbNail>?> {
+        return ApiResponse.success(HttpStatus.OK, consumerService.getAllStoreByAddressAndFilter(addressAndFilter))
     }
 
 }
