@@ -9,8 +9,16 @@ class Review (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = -1L,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "REVIEW_ID")
-    var consumer: Consumer
+    var consumerId: Long,
+
+    var storeId: Long,
+
+    var menuId: Long,
+
+    var content: String,
+
+    var image: String,
+
+    var price: String
 
 )

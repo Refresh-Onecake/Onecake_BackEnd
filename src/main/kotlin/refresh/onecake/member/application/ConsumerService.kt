@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service
 import refresh.onecake.member.adapter.api.dto.*
 import refresh.onecake.member.application.util.SecurityUtil
 import refresh.onecake.member.domain.common.*
+import refresh.onecake.member.domain.consumer.ReviewRepository
 import refresh.onecake.member.domain.consumer.StoreLike
 import refresh.onecake.member.domain.consumer.StoreLikeRepository
 import refresh.onecake.member.domain.member.MemberRepository
@@ -24,6 +25,7 @@ class ConsumerService (
     private val orderSheetRepository: OrderSheetRepository,
     private val dayOffRepository: DayOffRepository,
     private val storeLikeRepository: StoreLikeRepository,
+    private val reviewRepository: ReviewRepository,
     private val modelMapper: ModelMapper
 ){
 
@@ -123,21 +125,27 @@ class ConsumerService (
         }
     }
 
-    fun getAllStoreByAddressRangedByPopularity(address: String): List<StoreThumbNail>? {
+    fun getAllStoreByAddressAndFilter(addressAndFilter: AddressAndFilter): List<StoreThumbNail>? {
         val id = SecurityUtil.getCurrentMemberId()
-        var addressId: List<Long>? = addressRepository.findAllBySggNm(address)?.map { it.id }
+        var addressId: List<Long>? = addressRepository.findAllBySggNm(addressAndFilter.address)?.map { it.id }
         var output: MutableList<StoreThumbNail> = mutableListOf()
         for (i in addressId?.indices!!) {
             var store = storeRepository.findByAddressId(addressId[i])
             output.add(StoreThumbNail(
+                storeId = store.id,
                 storeImage = store.storeImage,
                 guName = addressRepository.getById(addressId!![i]).sggNm!!,
                 storeName = store.storeName,
                 likedNum = storeLikeRepository.countByStoreId(store.id),
+                reviewNum = reviewRepository.countByStoreId(store.id),
                 isLiked = storeLikeRepository.existsByMemberIdAndStoreId(id, store.id)
             ))
         }
-        output.sortByDescending { it.likedNum }
+        if (addressAndFilter.filter == "review") {
+            output.sortByDescending { it.reviewNum }
+        } else {
+            output.sortByDescending { it.likedNum }
+        }
         return output
 //        var stores: MutableList<StoreThumbNail> = mutableListOf()
 //        for (i in addressId?.indices!!) {
