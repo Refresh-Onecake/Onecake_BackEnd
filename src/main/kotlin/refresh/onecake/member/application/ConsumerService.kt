@@ -14,6 +14,8 @@ import refresh.onecake.member.domain.consumer.StoreLikeRepository
 import refresh.onecake.member.domain.member.MemberRepository
 import refresh.onecake.member.domain.seller.*
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 @Service
 class ConsumerService (
@@ -227,6 +229,10 @@ class ConsumerService (
 
     fun calculateTimeDiff(time: LocalDateTime) : String{
         val now = LocalDateTime.now()
+        println(LocalDateTime.now())
+        println(ZonedDateTime.now())
+        println(ZoneId.systemDefault())
+        println(now)
         var timeHistory: String
         if (now.year - time.year != 0) {
             timeHistory = (now.year - time.year).toString() + "년 전"
