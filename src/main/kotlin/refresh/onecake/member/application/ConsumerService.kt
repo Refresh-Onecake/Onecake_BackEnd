@@ -30,10 +30,21 @@ class ConsumerService (
     fun storeMainInfo(storeId:Long): StoreMainInfoDto {
         val id = SecurityUtil.getCurrentMemberId()
         val store = storeRepository.getById(storeId)
+        val address = addressRepository.getById(storeId)
+        val temp = store.storeName.elementAt(store.storeName.length - 1)
+        val index = (temp - 0xAC00.toChar()) % 28
+        var description = if (temp < 0xAC00.toChar() || temp > 0xD7A3.toChar()) {
+            address.sggNm + "에 위치한 " + store.storeName + "이에요."
+        } else if (index > 0) {
+            address.sggNm + "에 위치한 " + store.storeName + "이에요."
+        } else {
+            address.sggNm + "에 위치한 " + store.storeName + "에요."
+        }
+
         return StoreMainInfoDto(
             storeImage = store.storeImage,
             storeName = store.storeName,
-            storeDescription = store.storeDiscription,
+            storeDescription = description,
             likeNum = storeLikeRepository.countByStoreId(storeId),
             isLiked = storeLikeRepository.existsByMemberIdAndStoreId(id, storeId)
         )
