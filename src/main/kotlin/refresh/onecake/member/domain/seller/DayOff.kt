@@ -14,6 +14,8 @@ class DayOff (
 
     val storeId: Long,
 
-    val day: String
+    val day: String,
+
+    val dayOffName: String
 ){
 }
