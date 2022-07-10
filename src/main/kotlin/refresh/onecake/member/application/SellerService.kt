@@ -118,16 +118,17 @@ class SellerService (
         return menuRepository.findAllByStoreIdOrderByMenuNameAsc(id).map{ modelMapper.map(it, StoreMenuListDto::class.java) }
     }
 
-    fun setDayOff(day: String): DefaultResponseDto {
+    fun setDayOff(dayAndName: DayAndName): DefaultResponseDto {
         val id = SecurityUtil.getCurrentMemberId()
-        val dayOff = dayOffRepository.findByStoreIdAndDay(id, day)
+        val dayOff = dayOffRepository.findByStoreIdAndDay(id, dayAndName.dayOff)
         return if (dayOff != null) {
             dayOffRepository.delete(dayOff)
             DefaultResponseDto(true, "휴무 일정을 취소하였습니다.")
         } else {
             dayOffRepository.save(DayOff(
                 storeId = id,
-                day= day
+                day= dayAndName.dayOff,
+                dayOffName = dayAndName.dayOffName
             ))
             DefaultResponseDto(true, "휴무 일정을 등록하였습니다.")
         }
