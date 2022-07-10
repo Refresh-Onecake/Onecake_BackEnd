@@ -12,17 +12,17 @@ class Member(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = -1L,
 
-    var userName: String?,
+    var userName: String,
 
-    var userId: String?,
+    var userId: String,
 
-    var password: String?,
+    var password: String,
 
-    val phoneNumber: String?,
+    val phoneNumber: String,
 
     var profileImg: String?,
 
     @Enumerated(EnumType.STRING)
-    var memberType: MemberType?
+    var memberType: MemberType
 
 ) : BaseTimeEntity()
