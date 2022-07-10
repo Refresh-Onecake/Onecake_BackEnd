@@ -43,6 +43,12 @@ class ConsumerController (
         return ApiResponse.success(HttpStatus.OK, consumerService.getCakesSize(storeId))
     }
 
+    @ApiOperation(value = "소비자 - 특정 메뉴의 이미지들")
+    @GetMapping("stores/{storeId}/order/cakes/{menuId}")
+    fun getAllImagesOfSpecificMenu(@PathVariable storeId: Long, @PathVariable menuId: Long): ResponseEntity<MenuDescAndImages> {
+        return ApiResponse.success(HttpStatus.OK, consumerService.getAllImagesOfSpecificMenu(storeId, menuId))
+    }
+
     @ApiOperation(value = "소비자 - 주문하기 - GET 주문서 질문들 ")
     @GetMapping("stores/{storeId}/order/{menuId}")
     fun getOrderSheet(@PathVariable storeId: Long, @PathVariable menuId:Long): ResponseEntity<OrderSheetTwoTypeDto?> {
