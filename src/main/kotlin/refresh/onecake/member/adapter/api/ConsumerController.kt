@@ -77,4 +77,15 @@ class ConsumerController (
         return ApiResponse.success(HttpStatus.OK, consumerService.getAllStoreByAddressAndFilter(addressAndFilter))
     }
 
+    @ApiOperation(value = "소비자 - 리뷰 쓰기 ")
+    @PostMapping("stores/review")
+    fun postReview(@RequestBody postReview: PostReview): ResponseEntity<DefaultResponseDto> {
+        return ApiResponse.success(HttpStatus.OK, consumerService.postReview(postReview))
+    }
+
+    @ApiOperation(value = "소비자 - 가게의 리뷰 보기 ")
+    @GetMapping("stores/review/{storeId}")
+    fun getAllReviewsOfSpecificStore(@PathVariable storeId: Long): ResponseEntity<List<ReviewThumbnail>> {
+        return ApiResponse.success(HttpStatus.OK, consumerService.getAllReviewsOfSpecificStore(storeId))
+    }
 }

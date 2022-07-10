@@ -1,15 +1,19 @@
 package refresh.onecake.member.application
 
+import org.apache.tomcat.jni.Local
 import org.modelmapper.ModelMapper
 import org.springframework.stereotype.Service
 import refresh.onecake.member.adapter.api.dto.*
+import refresh.onecake.member.adapter.infra.ForbiddenException
 import refresh.onecake.member.application.util.SecurityUtil
 import refresh.onecake.member.domain.common.*
+import refresh.onecake.member.domain.consumer.Review
 import refresh.onecake.member.domain.consumer.ReviewRepository
 import refresh.onecake.member.domain.consumer.StoreLike
 import refresh.onecake.member.domain.consumer.StoreLikeRepository
 import refresh.onecake.member.domain.member.MemberRepository
 import refresh.onecake.member.domain.seller.*
+import java.time.LocalDateTime
 
 @Service
 class ConsumerService (
@@ -176,5 +180,67 @@ class ConsumerService (
             output.sortByDescending { it.likedNum }
         }
         return output
+    }
+
+    fun postReview(postReview: PostReview): DefaultResponseDto {
+        val orderHistory = orderHistoryRepository.findOrderHistoryById(postReview.orderId)
+        if (reviewRepository.existsByStoreIdAndConsumerIdAndMenuId(
+                orderHistory.storeId,
+                SecurityUtil.getCurrentMemberId(),
+                orderHistory.menuId
+            )
+        ) {
+            throw ForbiddenException("이미 해당 가게의 메뉴에 리뷰를 작성하였습니다.")
+        }
+        if (orderHistory.state != OrderState.COMPLETED) {
+            throw ForbiddenException("해당 주문서는 픽업완료 상태가 아닙니다.")
+        }
+        reviewRepository.save(Review(
+            id = orderHistory.id,
+            consumerId = SecurityUtil.getCurrentMemberId(),
+            storeId = orderHistory.storeId,
+            menuId = orderHistory.menuId,
+            content = postReview.content,
+            image = postReview.image,
+            price = postReview.price
+        ))
+        return DefaultResponseDto(true, "리뷰 작성을 완료하였습니다.")
+    }
+
+    fun getAllReviewsOfSpecificStore(storeId: Long): List<ReviewThumbnail>{
+        val reviews = reviewRepository.findAllByStoreId(storeId)
+        var outputs: MutableList<ReviewThumbnail> = mutableListOf()
+        for (i in reviews?.indices!!) {
+
+            val member = memberRepository.getById(reviews[i].consumerId)
+            var timeHistory = calculateTimeDiff(reviews[i].createdAt)
+
+            outputs.add(ReviewThumbnail(
+                profileImg = member.profileImg,
+                userName = member.userName,
+                timeHistory = timeHistory,
+                content = reviews[i].content,
+            ))
+        }
+        return outputs
+    }
+
+    fun calculateTimeDiff(time: LocalDateTime) : String{
+        val now = LocalDateTime.now()
+        var timeHistory: String
+        if (now.year - time.year != 0) {
+            timeHistory = (now.year - time.year).toString() + "년 전"
+        } else if (now.month.value - time.month.value != 0) {
+            timeHistory = (now.month.value - time.month.value).toString() + "달 전"
+        } else if (now.dayOfMonth - time.dayOfMonth != 0) {
+            timeHistory = (now.dayOfMonth - time.dayOfMonth).toString() + "일 전"
+        } else if (now.hour - time.hour != 0) {
+            timeHistory = (now.hour - time.hour).toString() + "시간 전"
+        } else if (now.minute - time.minute != 0) {
+            timeHistory = (now.minute - time.minute).toString() + "분 전"
+        } else {
+            timeHistory = "1분 전"
+        }
+        return timeHistory
     }
 }

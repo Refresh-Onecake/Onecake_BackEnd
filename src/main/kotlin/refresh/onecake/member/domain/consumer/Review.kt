@@ -1,13 +1,13 @@
 package refresh.onecake.member.domain.consumer
 
+import refresh.onecake.member.domain.BaseTimeEntity
 import javax.persistence.*
 
 @Entity
 class Review (
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = -1L,
+    val id: Long,
 
     var consumerId: Long,
 
@@ -17,8 +17,8 @@ class Review (
 
     var content: String,
 
-    var image: String,
+    var image: String?,
 
     var price: String
 
-)
+): BaseTimeEntity()
