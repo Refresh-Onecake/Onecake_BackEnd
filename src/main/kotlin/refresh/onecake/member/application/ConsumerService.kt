@@ -9,10 +9,7 @@ import refresh.onecake.member.domain.consumer.ReviewRepository
 import refresh.onecake.member.domain.consumer.StoreLike
 import refresh.onecake.member.domain.consumer.StoreLikeRepository
 import refresh.onecake.member.domain.member.MemberRepository
-import refresh.onecake.member.domain.seller.AddressRepository
-import refresh.onecake.member.domain.seller.DayOffRepository
-import refresh.onecake.member.domain.seller.MenuRepository
-import refresh.onecake.member.domain.seller.StoreRepository
+import refresh.onecake.member.domain.seller.*
 
 @Service
 class ConsumerService (
@@ -26,6 +23,7 @@ class ConsumerService (
     private val dayOffRepository: DayOffRepository,
     private val storeLikeRepository: StoreLikeRepository,
     private val reviewRepository: ReviewRepository,
+    private val imageRepository: ImageRepository,
     private val modelMapper: ModelMapper
 ){
 
@@ -36,6 +34,7 @@ class ConsumerService (
             storeImage = store.storeImage,
             storeName = store.storeName,
             storeDescription = store.storeDiscription,
+            likeNum = storeLikeRepository.countByStoreId(storeId),
             isLiked = storeLikeRepository.existsByMemberIdAndStoreId(id, storeId)
         )
     }
@@ -60,6 +59,25 @@ class ConsumerService (
             storeName = storeRepository.findStoreById(storeId).storeName,
             sizes = menuRepository.findAllIdAndMenuSizeByStoreIdOrderByMenuSizeAsc(storeId)
                 ?.map{modelMapper.map(it, MenuIdAndSizeDto::class.java)}
+        )
+    }
+
+    fun getAllImagesOfSpecificMenu(storeId: Long, menuId: Long): MenuDescAndImages {
+        var images = imageRepository.findAllByMenuId(menuId)
+        var store = storeRepository.findStoreById(storeId)
+        var menu = menuRepository.findMenuById(menuId)
+
+        return MenuDescAndImages(
+            storeName = store.storeName,
+            menuName = menu.menuName,
+            menuDescription = menu.menuDescription,
+            allImages = images?.map { modelMapper.map(it, MenuIdAndImage::class.java) },
+            birthdayImages = images?.filter { it.keyword == Keyword.BIRTHDAY }?.map { modelMapper.map(it, MenuIdAndImage::class.java) },
+            monthlyEventImages = images?.filter { it.keyword == Keyword.MONTHLY_EVENT }?.map { modelMapper.map(it, MenuIdAndImage::class.java) },
+            anniversaryImages = images?.filter { it.keyword == Keyword.ANNIVERSARY }?.map { modelMapper.map(it, MenuIdAndImage::class.java) },
+            employmentImages = images?.filter { it.keyword == Keyword.EMPLOYMENT }?.map { modelMapper.map(it, MenuIdAndImage::class.java) },
+            marriageImages = images?.filter { it.keyword == Keyword.MARRIAGE }?.map { modelMapper.map(it, MenuIdAndImage::class.java) },
+            dischargeImages = images?.filter { it.keyword == Keyword.DISCHARGE }?.map { modelMapper.map(it, MenuIdAndImage::class.java) }
         )
     }
 
@@ -147,13 +165,5 @@ class ConsumerService (
             output.sortByDescending { it.likedNum }
         }
         return output
-//        var stores: MutableList<StoreThumbNail> = mutableListOf()
-//        for (i in addressId?.indices!!) {
-//            var store = storeRepository.findStoreById(addressId[i])
-//            stores[i] = StoreThumbNail(
-//                storeImage = store.storeImage,
-//                guName =
-//            )
-//        }
     }
 }
