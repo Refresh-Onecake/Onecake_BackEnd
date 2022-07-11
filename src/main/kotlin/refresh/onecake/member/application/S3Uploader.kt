@@ -8,6 +8,8 @@ import com.amazonaws.util.IOUtils
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.multipart.MultipartFile
+import refresh.onecake.OnecakeApplication
+import refresh.onecake.main
 import java.io.ByteArrayInputStream
 import java.util.*
 
@@ -37,5 +39,4 @@ class S3Uploader (
 
         return amazonS3Client.getUrl(bucket, fileName).toString()
     }
-
 }
