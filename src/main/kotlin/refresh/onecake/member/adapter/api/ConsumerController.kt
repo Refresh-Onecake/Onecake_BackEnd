@@ -85,7 +85,7 @@ class ConsumerController (
 
     @ApiOperation(value = "소비자 - 가게의 리뷰 보기 ")
     @GetMapping("stores/review/{storeId}")
-    fun getAllReviewsOfSpecificStore(@PathVariable storeId: Long): ResponseEntity<List<ReviewThumbnail>> {
+    fun getAllReviewsOfSpecificStore(@PathVariable storeId: Long): ResponseEntity<ReviewAndNum> {
         return ApiResponse.success(HttpStatus.OK, consumerService.getAllReviewsOfSpecificStore(storeId))
     }
 }

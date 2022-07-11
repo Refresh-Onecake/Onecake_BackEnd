@@ -209,7 +209,7 @@ class ConsumerService (
         return DefaultResponseDto(true, "리뷰 작성을 완료하였습니다.")
     }
 
-    fun getAllReviewsOfSpecificStore(storeId: Long): List<ReviewThumbnail>{
+    fun getAllReviewsOfSpecificStore(storeId: Long): ReviewAndNum{
         val reviews = reviewRepository.findAllByStoreId(storeId)
         var outputs: MutableList<ReviewThumbnail> = mutableListOf()
         for (i in reviews?.indices!!) {
@@ -224,15 +224,14 @@ class ConsumerService (
                 content = reviews[i].content,
             ))
         }
-        return outputs
+        return ReviewAndNum(
+            reviewNum = outputs.size,
+            reviews = outputs
+        )
     }
 
     fun calculateTimeDiff(time: LocalDateTime) : String{
         val now = LocalDateTime.now()
-        println(LocalDateTime.now())
-        println(ZonedDateTime.now())
-        println(ZoneId.systemDefault())
-        println(now)
         var timeHistory: String
         if (now.year - time.year != 0) {
             timeHistory = (now.year - time.year).toString() + "년 전"
