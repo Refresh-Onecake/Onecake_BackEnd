@@ -31,8 +31,14 @@ class SellerController (
 
     @ApiOperation(value = "메뉴 보기")
     @GetMapping("/store/menu")
-    fun getMenus(): ResponseEntity<List<StoreMenuListDto>> {
+    fun getMenus(): ResponseEntity<List<StoreMenuListAndIdDto>> {
         return ApiResponse.success(HttpStatus.OK, sellerService.getMenus())
+    }
+
+    @ApiOperation(value = "메뉴 삭제")
+    @DeleteMapping("/store/menu/{menuId}")
+    fun deleteMenu(@PathVariable menuId: Long): ResponseEntity<DefaultResponseDto> {
+        return ApiResponse.success(HttpStatus.OK, sellerService.deleteMenu(menuId))
     }
 
     @ApiOperation(value = "휴일 지정")
@@ -94,5 +100,7 @@ class SellerController (
 //    fun orderStateToReceived(@PathVariable orderId: Long): ResponseEntity<DefaultResponseDto> {
 //        return ApiResponse.success(HttpStatus.OK, sellerService.orderStateToReceived(orderId))
 //    }
+
+
 
 }
