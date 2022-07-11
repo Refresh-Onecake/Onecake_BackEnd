@@ -113,9 +113,17 @@ class SellerService (
         return DefaultResponseDto(true, "메뉴 등록을 완료하였습니다.")
     }
 
-    fun getMenus() : List<StoreMenuListDto>{
+    fun getMenus() : List<StoreMenuListAndIdDto>{
         val id = SecurityUtil.getCurrentMemberId()
-        return menuRepository.findAllByStoreIdOrderByMenuNameAsc(id).map{ modelMapper.map(it, StoreMenuListDto::class.java) }
+        return menuRepository.findAllByStoreIdOrderByMenuNameAsc(id).map{ modelMapper.map(it, StoreMenuListAndIdDto::class.java) }
+    }
+
+    fun deleteMenu(menuId: Long): DefaultResponseDto {
+        if (!menuRepository.existsById(menuId)) {
+            throw ForbiddenException("메뉴를 삭제할 수 없습니다.")
+        }
+        menuRepository.deleteById(menuId)
+        return DefaultResponseDto(true, "메뉴 삭제를 성공했습니다.")
     }
 
     fun setDayOff(dayAndName: DayAndName): DefaultResponseDto {
