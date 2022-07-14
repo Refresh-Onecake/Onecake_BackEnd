@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository
 interface QuestionRepository : JpaRepository<Question, Long>{
     fun findAllByMenuId(menuId: Long): List<Question>?
     fun findQuestionById(id: Long): Question
+    fun findByMenuId(menuId: Long): Question?
+    fun deleteAllByMenuId(menuId: Long)
 }

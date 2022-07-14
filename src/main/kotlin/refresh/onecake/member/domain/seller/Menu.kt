@@ -10,9 +10,7 @@ class Menu (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = -1L,
 
-    @ManyToOne(targetEntity=Store::class, fetch= FetchType.LAZY)
-    @JoinColumn(name="store_id")
-    var store: Store,
+    var storeId: Long,
 
     var menuName: String,
 

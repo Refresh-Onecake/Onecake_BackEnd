@@ -41,6 +41,18 @@ class SellerController (
         return ApiResponse.success(HttpStatus.OK, sellerService.deleteMenu(menuId))
     }
 
+    @ApiOperation(value = "저장되어있던 메뉴및 주문서 데이터 불러오기")
+    @GetMapping("/store/menu/{menuId}")
+    fun getStoredMenuForm(@PathVariable menuId: Long): ResponseEntity<StoredMenuForm> {
+        return ApiResponse.success(HttpStatus.OK, sellerService.getStoredMenuForm(menuId))
+    }
+
+//    @ApiOperation(value = "메뉴 수정")
+//    @PutMapping("/store/menu/{menuId}")
+//    fun editMenu(@PathVariable menuId: Long, @RequestBody storedMenuForm: StoredMenuForm): ResponseEntity<DefaultResponseDto> {
+//        return ApiResponse.success(HttpStatus.OK, sellerService.editMenu(menuId, storedMenuForm))
+//    }
+
     @ApiOperation(value = "휴일 지정")
     @PostMapping("/store/dayOff")
     fun setDayOff(@RequestBody dayAndName: DayAndName): ResponseEntity<DefaultResponseDto> {
@@ -102,5 +114,10 @@ class SellerController (
 //    }
 
 
+    @ApiOperation(value = "판매자의 카카오톡 url 가져오기")
+    @GetMapping("/chat")
+    fun getSellerChatUrl(): ResponseEntity<String> {
+        return ApiResponse.success(HttpStatus.OK, sellerService.getSellerChatUrl())
+    }
 
 }

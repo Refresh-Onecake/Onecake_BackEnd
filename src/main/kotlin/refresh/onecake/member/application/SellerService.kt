@@ -72,7 +72,7 @@ class SellerService (
 //            return DefaultResponseDto(false, "이미 등록한 케이크 사이즈입니다.")
 //        }
         val menu = Menu(
-            store = storeRepository.getById(id),
+            storeId = id,
             menuName = applyMenuDto.cakeSize + " 커스텀 케이크",
             menuSize = applyMenuDto.cakeSize,
             image = applyMenuDto.cakeImage,
@@ -124,6 +124,42 @@ class SellerService (
         }
         menuRepository.deleteById(menuId)
         return DefaultResponseDto(true, "메뉴 삭제를 성공했습니다.")
+    }
+
+    fun getStoredMenuForm(menuId: Long): StoredMenuForm {
+        val menu = menuRepository.findMenuById(menuId)
+        val question = questionRepository.findAllByMenuId(menuId)
+        return StoredMenuForm(
+            cakeSize = menu.menuSize,
+            image = menu.image,
+            price = menu.price,
+            menuDescription = menu.menuDescription,
+            taste = menu.taste,
+            consumerInput = question?.filter { it.isConsumerInput }?.map { it.question },
+            cakeInput = question?.filter { !it.isConsumerInput }?.map { it.question }
+
+        )
+    }
+
+    fun editMenu(menuId: Long, storedMenuForm: StoredMenuForm) {
+        if (!menuRepository.existsById(menuId)) {
+            throw ForbiddenException("해당 메뉴 id는 존재하지 않습니다.")
+        }
+        val id = SecurityUtil.getCurrentMemberId()
+        menuRepository.deleteById(menuId)
+        questionRepository.deleteAllByMenuId(menuId)
+        val menu = Menu(
+            id = menuId,
+            storeId = id,
+            menuName = storedMenuForm.cakeSize + " 커스텀 케이크",
+            menuSize = storedMenuForm.cakeSize,
+            price = storedMenuForm.price,
+            menuDescription = storedMenuForm.menuDescription,
+            taste = storedMenuForm.taste,
+            image = storedMenuForm.image
+        )
+        menuRepository.save(menu)
+
     }
 
     fun setDayOff(dayAndName: DayAndName): DefaultResponseDto {
@@ -279,5 +315,10 @@ class SellerService (
 //        orderHistoryRepository.save(order)
 //        return DefaultResponseDto(true, "다시 진행하기로 상태 변경")
 //    }
+
+    fun getSellerChatUrl(): String {
+        val id = SecurityUtil.getCurrentMemberId()
+        return storeRepository.getById(id).kakaoChannelUrl
+    }
 
 }
