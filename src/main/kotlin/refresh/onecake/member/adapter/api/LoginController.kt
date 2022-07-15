@@ -5,10 +5,7 @@ import io.swagger.annotations.ApiOperation
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import refresh.onecake.member.adapter.api.SwaggerNotes.Companion.LOGIN_CONTROLLER_TAG
 import refresh.onecake.member.adapter.api.SwaggerNotes.Companion.LOGIN_MEMO
 import refresh.onecake.member.adapter.api.SwaggerNotes.Companion.REISSUE_MEMO
@@ -49,5 +46,11 @@ class LoginController (
             val invalidTokenDto = TokenDto("", "", "", -1L)
             ApiResponse.success(HttpStatus.BAD_REQUEST, invalidTokenDto)
         }
+    }
+
+    @ApiOperation(value = "로그아웃")
+    @PostMapping("/logout")
+    fun logout(): ResponseEntity<DefaultResponseDto> {
+        return ApiResponse.success(HttpStatus.OK, loginService.logout())
     }
 }
