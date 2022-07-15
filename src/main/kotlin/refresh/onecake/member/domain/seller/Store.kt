@@ -29,4 +29,6 @@ class Store(
 
     var kakaoChannelUrl: String,
 
+    var isActivated: Boolean
+
 ) : BaseTimeEntity()

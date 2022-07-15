@@ -36,6 +36,9 @@ class ConsumerService (
     fun storeMainInfo(storeId:Long): StoreMainInfoDto {
         val id = SecurityUtil.getCurrentMemberId()
         val store = storeRepository.getById(storeId)
+
+        isActivatedStore(store)
+
         val address = addressRepository.getById(storeId)
         val temp = store.storeName.elementAt(store.storeName.length - 1)
         val index = (temp - 0xAC00.toChar()) % 28
@@ -57,11 +60,13 @@ class ConsumerService (
     }
 
     fun storeMenuList(storeId: Long): List<StoreMenuListDto>? {
+        isActivatedStore(storeRepository.findStoreById(storeId))
         return menuRepository.findAllByStoreIdOrderByMenuSizeAsc(storeId)
             ?.map { modelMapper.map(it, StoreMenuListDto::class.java) }
     }
 
     fun getStoreInformation(storeId: Long): StoreDetailInfoDto {
+        isActivatedStore(storeRepository.findStoreById(storeId))
         val store = storeRepository.getById(storeId)
         return StoreDetailInfoDto(
             operatingTime = store.openTime + " ~ " + store.closeTime,
@@ -72,6 +77,7 @@ class ConsumerService (
     }
 
     fun getCakesSize(storeId: Long): StoreNameAndCakeSizesDto{
+        isActivatedStore(storeRepository.findStoreById(storeId))
         return StoreNameAndCakeSizesDto(
             storeName = storeRepository.findStoreById(storeId).storeName,
             sizes = menuRepository.findAllIdAndMenuSizeByStoreIdOrderByMenuSizeAsc(storeId)
@@ -82,6 +88,7 @@ class ConsumerService (
     fun getAllImagesOfSpecificMenu(storeId: Long, menuId: Long): MenuDescAndImages {
         var images = imageRepository.findAllByMenuId(menuId)
         var store = storeRepository.findStoreById(storeId)
+        isActivatedStore(store)
         var menu = menuRepository.findMenuById(menuId)
 
         return MenuDescAndImages(
@@ -99,6 +106,7 @@ class ConsumerService (
     }
 
     fun getOrderSheet(storeId: Long, menuId: Long): OrderSheetTwoTypeDto? {
+        isActivatedStore(storeRepository.findStoreById(storeId))
         val questions = questionRepository.findAllByMenuId(menuId)
         return OrderSheetTwoTypeDto(
 //            consumerInput = questions?.filter { it.isConsumerInput }?.map { modelMapper.map(it, IdAndQuestionDto::class.java) },
@@ -113,6 +121,7 @@ class ConsumerService (
     }
 
     fun postOrderSheet(storeId: Long, menuId: Long, answersDto: AnswersDto): DefaultResponseDto {
+        isActivatedStore(storeRepository.findStoreById(storeId))
         val id = SecurityUtil.getCurrentMemberId()
         val orderHistory = OrderHistory(
             userId = id,
@@ -147,6 +156,7 @@ class ConsumerService (
 
     fun pushStoreLike(storeId:Long): DefaultResponseDto {
         val id = SecurityUtil.getCurrentMemberId()
+        isActivatedStore(storeRepository.findStoreById(storeId))
         val storeLike = storeLikeRepository.findStoreLikeByMemberIdAndStoreId(id, storeId)
         return if (storeLike != null) {
             storeLikeRepository.delete(storeLike)
@@ -165,7 +175,7 @@ class ConsumerService (
         var addressId: List<Long>? = addressRepository.findAllBySggNm(addressAndFilter.address)?.map { it.id }
         var output: MutableList<StoreThumbNail> = mutableListOf()
         for (i in addressId?.indices!!) {
-            var store = storeRepository.findByAddressId(addressId[i])
+            var store = storeRepository.findByAddressIdAndIsActivated(addressId[i], true) ?: continue
             output.add(StoreThumbNail(
                 storeId = store.id,
                 storeImage = store.storeImage,
@@ -210,6 +220,7 @@ class ConsumerService (
     }
 
     fun getAllReviewsOfSpecificStore(storeId: Long): ReviewAndNum{
+        isActivatedStore(storeRepository.findStoreById(storeId))
         val reviews = reviewRepository.findAllByStoreId(storeId)
         var outputs: MutableList<ReviewThumbnail> = mutableListOf()
         for (i in reviews?.indices!!) {
@@ -247,5 +258,9 @@ class ConsumerService (
             timeHistory = "1분 전"
         }
         return timeHistory
+    }
+
+    fun isActivatedStore(store: Store){
+        if(!store.isActivated) throw ForbiddenException("접근할 수 없는 가게입니다.")
     }
 }

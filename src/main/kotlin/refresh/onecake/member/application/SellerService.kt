@@ -18,6 +18,7 @@ class SellerService (
     private val storeRepository: StoreRepository,
     private val addressRepository: AddressRepository,
     private val sellerRepository: SellerRepository,
+    private val memberRepository: MemberRepository,
     private val menuRepository: MenuRepository,
     private val questionRepository: QuestionRepository,
     private val dayOffRepository: DayOffRepository,
@@ -54,7 +55,8 @@ class SellerService (
                 openTime = applyStoreRequestDto.openTime,
                 closeTime = applyStoreRequestDto.closeTime,
                 kakaoChannelUrl = applyStoreRequestDto.kakaoChannelUrl,
-                storeImage = applyStoreRequestDto.storeImage
+                storeImage = applyStoreRequestDto.storeImage,
+                isActivated = true
             )
             storeRepository.save(store)
             val seller = sellerRepository.getById(id)
@@ -94,7 +96,8 @@ class SellerService (
                 var question = Question(
                     menuId = savedMenu.id,
                     question = applyMenuDto.consumerInput!![i],
-                    isConsumerInput = true
+                    isConsumerInput = true,
+                    isActivated = true
                 )
                 questionRepository.save(question)
             }
@@ -104,7 +107,8 @@ class SellerService (
                 var question = Question(
                     menuId = savedMenu.id,
                     question = applyMenuDto.cakeInput!![i],
-                    isConsumerInput = false
+                    isConsumerInput = false,
+                    isActivated = true
                 )
                 questionRepository.save(question)
             }
@@ -159,6 +163,12 @@ class SellerService (
             image = storedMenuForm.image
         )
         menuRepository.save(menu)
+
+        val consumerInput = storedMenuForm.consumerInput
+        val questions = questionRepository.findAllByMenuId(menuId)
+        for (i in questions?.indices!!) {
+            if(consumerInput?.contains(questions?.map { it.question }?.get(i)) == true) questions[i].isActivated
+        }
 
     }
 
@@ -295,30 +305,23 @@ class SellerService (
         return DefaultResponseDto(true, "주문 취소로 상태 변경")
     }
 
-//    fun orderStateToMaking(orderId: Long): DefaultResponseDto {
-//        val order = orderHistoryRepository.findOrderHistoryById(orderId)
-//        order.state = OrderState.MAKING
-//        orderHistoryRepository.save(order)
-//        return DefaultResponseDto(true, "케이크 제작하기로 상태 변경")
-//    }
-//
-//    fun orderStateToCompleted(orderId: Long): DefaultResponseDto {
-//        val order = orderHistoryRepository.findOrderHistoryById(orderId)
-//        order.state = OrderState.COMPLETED
-//        orderHistoryRepository.save(order)
-//        return DefaultResponseDto(true, "픽업 완료하기로 상태 변경")
-//    }
-//
-//    fun orderStateToReceived(orderId: Long): DefaultResponseDto {
-//        val order = orderHistoryRepository.findOrderHistoryById(orderId)
-//        order.state = OrderState.RECEIVED
-//        orderHistoryRepository.save(order)
-//        return DefaultResponseDto(true, "다시 진행하기로 상태 변경")
-//    }
-
     fun getSellerChatUrl(): String {
         val id = SecurityUtil.getCurrentMemberId()
         return storeRepository.getById(id).kakaoChannelUrl
+    }
+
+    fun resign(): DefaultResponseDto{
+        val id = SecurityUtil.getCurrentMemberId()
+
+        val member = memberRepository.getById(id)
+        member.isActivated = false
+        memberRepository.save(member)
+
+        val store = storeRepository.findStoreById(id)
+        store.isActivated = false
+        storeRepository.save(store)
+
+        return DefaultResponseDto(true, "탈퇴 처리가 완료되었습니다.")
     }
 
 }
