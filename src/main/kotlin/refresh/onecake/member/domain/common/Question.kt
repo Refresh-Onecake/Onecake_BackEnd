@@ -14,7 +14,9 @@ class Question (
 
     var question: String,
 
-    var isConsumerInput: Boolean
+    var isConsumerInput: Boolean,
+
+    var isActivated: Boolean
 
 ){
 }

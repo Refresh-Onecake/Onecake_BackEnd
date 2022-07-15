@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import refresh.onecake.member.adapter.api.dto.*
+import refresh.onecake.member.adapter.infra.ForbiddenException
 import refresh.onecake.member.adapter.infra.jwt.TokenProvider
 import refresh.onecake.member.application.util.SecurityUtil
 import refresh.onecake.member.domain.consumer.Consumer
@@ -43,7 +44,8 @@ class LoginService(
                 password = passwordEncoder.encode(signUpRequestDto.password),
                 phoneNumber = signUpRequestDto.phoneNumber,
                 memberType = signUpRequestDto.memberType,
-                profileImg = null
+                profileImg = null,
+                isActivated = true
             )
         )
         giveRole(member, signUpRequestDto.memberType)
@@ -68,6 +70,10 @@ class LoginService(
 
     @Transactional
     fun login(loginRequestDto: LoginRequestDto): TokenRoleDto {
+
+        if (memberRepository.findByUserId(loginRequestDto.userId)?.isActivated == false) {
+            throw ForbiddenException("탈퇴한 회원입니다.")
+        }
 
         val authenticationToken = UsernamePasswordAuthenticationToken(loginRequestDto.userId, loginRequestDto.password)
 
@@ -121,7 +127,4 @@ class LoginService(
 
         return tokenDto
     }
-
-//    @Transactional
-//    fun logout(tokenRequestDto: TokenRequestDto):
 }

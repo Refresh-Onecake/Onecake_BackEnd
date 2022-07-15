@@ -23,6 +23,8 @@ class Member(
     var profileImg: String?,
 
     @Enumerated(EnumType.STRING)
-    var memberType: MemberType
+    var memberType: MemberType,
+
+    var isActivated: Boolean
 
 ) : BaseTimeEntity()
