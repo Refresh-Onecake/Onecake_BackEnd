@@ -128,7 +128,7 @@ class SellerService (
 
     fun getStoredMenuForm(menuId: Long): StoredMenuForm {
         val menu = menuRepository.findMenuById(menuId)
-        val question = questionRepository.findAllByMenuId(menuId)
+        val question = questionRepository.findAllByMenuIdAndIsActivated(menuId, true)
         return StoredMenuForm(
             cakeSize = menu.menuSize,
             image = menu.image,
@@ -163,7 +163,7 @@ class SellerService (
 
         val consumerInputQuestions = storedMenuForm.consumerInput
         val cakeInputQuestions = storedMenuForm.cakeInput
-        val questions = questionRepository.findAllByMenuId(menuId)
+        val questions = questionRepository.findAllByMenuIdAndIsActivated(menuId, true)
 
 //        consumerInputQuestion.forEach {
 //            inputQuestion ->
@@ -276,10 +276,13 @@ class SellerService (
         val menu = menuRepository.findMenuById(order.menuId)
         val orderSheet = orderSheetRepository.findAllByOrderId(orderId)
         val answers = orderSheet?.map { it.answer }
+        val questionIds = orderSheet?.map { it.questionId }
+
         var forms: MutableList<String>? = mutableListOf()
-        for (i in orderSheet?.indices!!) {
-            forms?.add(i, questionRepository.findQuestionById(orderSheet[i].questionId).question + " : " + answers?.get(i))
+        for (i in questionIds?.indices!!) {
+            forms?.add(i, questionRepository.findQuestionById(questionIds[i]).question + " : " + answers?.get(i))
         }
+
         return SpecificOrderForm(
             menuName = menu.menuName,
             price = menu.price,
