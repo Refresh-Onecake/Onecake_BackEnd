@@ -107,7 +107,7 @@ class ConsumerService (
 
     fun getOrderSheet(storeId: Long, menuId: Long): OrderSheetTwoTypeDto? {
         isActivatedStore(storeRepository.findStoreById(storeId))
-        val questions = questionRepository.findAllByMenuId(menuId)
+        val questions = questionRepository.findAllByMenuIdAndIsActivated(menuId, true)
         return OrderSheetTwoTypeDto(
 //            consumerInput = questions?.filter { it.isConsumerInput }?.map { modelMapper.map(it, IdAndQuestionDto::class.java) },
 //            cakeInput = questions?.filter { !it.isConsumerInput }?.map { modelMapper.map(it, IdAndQuestionDto::class.java) }
@@ -135,7 +135,7 @@ class ConsumerService (
         )
         val savedOrderHistory = orderHistoryRepository.save(orderHistory)
 
-        val questions = questionRepository.findAllByMenuId(menuId)
+        val questions = questionRepository.findAllByMenuIdAndIsActivated(menuId, true)
 
         if (questions != null) {
             for (i in questions.indices) {
