@@ -111,8 +111,8 @@ class ConsumerService (
         return OrderSheetTwoTypeDto(
 //            consumerInput = questions?.filter { it.isConsumerInput }?.map { modelMapper.map(it, IdAndQuestionDto::class.java) },
 //            cakeInput = questions?.filter { !it.isConsumerInput }?.map { modelMapper.map(it, IdAndQuestionDto::class.java) }
-            consumerInput = questions?.filter { it.isConsumerInput }?.map { question -> question.question },
-            cakeInput = questions?.filter { !it.isConsumerInput }?.map { question -> question.question }
+            consumerInput = questions?.filter { it.isConsumerInput && it.isActivated }?.map { question -> question.question },
+            cakeInput = questions?.filter { !it.isConsumerInput && it.isActivated }?.map { question -> question.question }
         )
     }
 

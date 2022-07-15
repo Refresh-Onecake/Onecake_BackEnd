@@ -121,7 +121,7 @@ class SellerController (
     }
 
     @ApiOperation(value = "판매자 회원탈퇴하기")
-    @DeleteMapping("/resign")
+    @PostMapping("/resign")
     fun resign(): ResponseEntity<DefaultResponseDto> {
         return ApiResponse.success(HttpStatus.OK, sellerService.resign())
     }

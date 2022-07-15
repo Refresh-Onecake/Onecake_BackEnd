@@ -167,7 +167,7 @@ class SellerService (
         val consumerInput = storedMenuForm.consumerInput
         val questions = questionRepository.findAllByMenuId(menuId)
         for (i in questions?.indices!!) {
-            if(consumerInput?.contains(questions?.map { it.question }?.get(i)) == true) questions[i].isActivated
+            if(consumerInput?.contains(questions?.map { it.question }?.get(i)) == false) questions[i].isActivated = false
         }
 
     }
