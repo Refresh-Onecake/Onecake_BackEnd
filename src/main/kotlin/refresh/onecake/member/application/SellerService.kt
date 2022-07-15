@@ -2,16 +2,12 @@ package refresh.onecake.member.application
 
 import org.modelmapper.ModelMapper
 import org.springframework.stereotype.Service
-import org.springframework.web.multipart.MultipartFile
 import refresh.onecake.member.adapter.api.dto.*
 import refresh.onecake.member.adapter.infra.ForbiddenException
-import refresh.onecake.member.adapter.infra.jwt.JwtAccessDeniedHandler
 import refresh.onecake.member.application.util.SecurityUtil
 import refresh.onecake.member.domain.common.*
 import refresh.onecake.member.domain.member.MemberRepository
 import refresh.onecake.member.domain.seller.*
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @Service
 class SellerService (
@@ -139,36 +135,71 @@ class SellerService (
             price = menu.price,
             menuDescription = menu.menuDescription,
             taste = menu.taste,
-            consumerInput = question?.filter { it.isConsumerInput }?.map { it.question },
-            cakeInput = question?.filter { !it.isConsumerInput }?.map { it.question }
+            consumerInput = question.filter { it.isConsumerInput && it.isActivated }.map { it.question },
+            cakeInput = question.filter { !it.isConsumerInput && it.isActivated }.map { it.question }
 
         )
     }
 
-    fun editMenu(menuId: Long, storedMenuForm: StoredMenuForm) {
+    fun editMenu(menuId: Long, storedMenuForm: StoredMenuForm): DefaultResponseDto {
+
+        //TODO : 메뉴 사이즈 unique
+
         if (!menuRepository.existsById(menuId)) {
             throw ForbiddenException("해당 메뉴 id는 존재하지 않습니다.")
         }
         val id = SecurityUtil.getCurrentMemberId()
-        menuRepository.deleteById(menuId)
-        questionRepository.deleteAllByMenuId(menuId)
-        val menu = Menu(
-            id = menuId,
-            storeId = id,
-            menuName = storedMenuForm.cakeSize + " 커스텀 케이크",
-            menuSize = storedMenuForm.cakeSize,
-            price = storedMenuForm.price,
-            menuDescription = storedMenuForm.menuDescription,
-            taste = storedMenuForm.taste,
-            image = storedMenuForm.image
-        )
+        var menu = menuRepository.findMenuById(menuId)
+        menu.id = menuId
+        menu.storeId = id
+        menu.menuName = storedMenuForm.cakeSize + " 커스텀 케이크"
+        menu.menuSize = storedMenuForm.cakeSize
+        menu.price = storedMenuForm.price
+        menu.menuDescription = storedMenuForm.menuDescription
+        menu.taste = storedMenuForm.taste
+        menu.image = storedMenuForm.image
+
         menuRepository.save(menu)
 
-        val consumerInput = storedMenuForm.consumerInput
+        val consumerInputQuestions = storedMenuForm.consumerInput
+        val cakeInputQuestions = storedMenuForm.cakeInput
         val questions = questionRepository.findAllByMenuId(menuId)
-        for (i in questions?.indices!!) {
-            if(consumerInput?.contains(questions?.map { it.question }?.get(i)) == false) questions[i].isActivated = false
-        }
+
+//        consumerInputQuestion.forEach {
+//            inputQuestion ->
+//            if(questions.all{ it.question != inputQuestion })
+//                questionRepository.save(Question(
+//                    menuId = menuId,
+//                    question = inputQuestion,
+//                    isConsumerInput = true,
+//                    isActivated = true,
+//                ))
+//        }
+
+        questions.forEach { it.isActivated = false }
+        questionRepository.saveAll(questions)
+
+        for (i in consumerInputQuestions.indices) {
+            questionRepository.save(
+                Question(
+                    menuId = menuId,
+                    question = consumerInputQuestions[i],
+                    isConsumerInput = true,
+                    isActivated = true
+                )
+        ) }
+
+        for (i in cakeInputQuestions.indices) {
+            questionRepository.save(
+                Question(
+                    menuId = menuId,
+                    question = cakeInputQuestions[i],
+                    isConsumerInput = false,
+                    isActivated = true
+                )
+        ) }
+
+        return DefaultResponseDto(true, "메뉴 수정을 성공했습니다.")
 
     }
 
