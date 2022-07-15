@@ -127,4 +127,10 @@ class LoginService(
 
         return tokenDto
     }
+
+    fun logout(): DefaultResponseDto {
+        val id = SecurityUtil.getCurrentMemberId()
+        redisTemplate.delete("RT:$id")
+        return DefaultResponseDto(true, "로그아웃 되었습니다.")
+    }
 }
