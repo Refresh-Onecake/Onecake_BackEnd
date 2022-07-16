@@ -71,7 +71,9 @@ class LoginService(
     @Transactional
     fun login(loginRequestDto: LoginRequestDto): TokenRoleDto {
 
-        if (memberRepository.findByUserId(loginRequestDto.userId)?.isActivated == false) {
+        val member = memberRepository.findByUserId(loginRequestDto.userId)
+
+        if (!member.isActivated) {
             throw ForbiddenException("탈퇴한 회원입니다.")
         }
 
@@ -81,12 +83,19 @@ class LoginService(
 
         val tokenDto: TokenDto = tokenProvider.generateTokenDto(authentication)
 
+        val storeId = if (member.memberType == MemberType.SELLER) {
+            member.id
+        } else {
+            null
+        }
+
         val tokenRoleDto = TokenRoleDto(
             grantType = tokenDto.grantType,
             accessToken = tokenDto.accessToken,
             refreshToken = tokenDto.refreshToken,
             accessTokenExpiresIn = tokenDto.accessTokenExpiresIn,
-            role = memberRepository.getByUserId(loginRequestDto.userId).memberType
+            role = member.memberType,
+            storeId = storeId
         )
 
         redisTemplate.opsForValue()

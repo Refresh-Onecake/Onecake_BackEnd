@@ -8,5 +8,5 @@ data class TokenRoleDto(
     val refreshToken: String,
     val accessTokenExpiresIn: Long,
     val role: MemberType?,
-//    val storeId: Long
+    val storeId: Long?
 )
