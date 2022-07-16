@@ -17,6 +17,7 @@ import refresh.onecake.member.domain.member.MemberRepository
 import refresh.onecake.member.domain.member.MemberType
 import refresh.onecake.member.domain.seller.Seller
 import refresh.onecake.member.domain.seller.SellerRepository
+import refresh.onecake.member.domain.seller.StoreRepository
 import java.util.concurrent.TimeUnit
 import javax.transaction.Transactional
 
@@ -29,7 +30,8 @@ class LoginService(
     private val tokenProvider: TokenProvider,
     private val redisTemplate: RedisTemplate<String, Any>,
     private val sellerRepository: SellerRepository,
-    private val consumerRepository: ConsumerRepository
+    private val consumerRepository: ConsumerRepository,
+    private val storeRepository: StoreRepository
 ) {
 
     @Transactional
@@ -84,9 +86,13 @@ class LoginService(
         val tokenDto: TokenDto = tokenProvider.generateTokenDto(authentication)
 
         val storeId = if (member.memberType == MemberType.SELLER) {
-            member.id
+            if (storeRepository.existsById(member.id)) {
+                member.id
+            } else {
+                0
+            }
         } else {
-            0
+            -1
         }
 
         val tokenRoleDto = TokenRoleDto(
