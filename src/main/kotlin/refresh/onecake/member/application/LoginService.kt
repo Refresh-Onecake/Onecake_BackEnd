@@ -86,7 +86,7 @@ class LoginService(
         val storeId = if (member.memberType == MemberType.SELLER) {
             member.id
         } else {
-            null
+            0
         }
 
         val tokenRoleDto = TokenRoleDto(
