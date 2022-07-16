@@ -141,7 +141,7 @@ class SellerService (
         )
     }
 
-    fun editMenu(menuId: Long, storedMenuForm: StoredMenuForm): DefaultResponseDto {
+    fun editMenu(menuId: Long, applyMenuDto: ApplyMenuDto): DefaultResponseDto {
 
         //TODO : 메뉴 사이즈 unique
 
@@ -152,17 +152,17 @@ class SellerService (
         var menu = menuRepository.findMenuById(menuId)
         menu.id = menuId
         menu.storeId = id
-        menu.menuName = storedMenuForm.cakeSize + " 커스텀 케이크"
-        menu.menuSize = storedMenuForm.cakeSize
-        menu.price = storedMenuForm.price
-        menu.menuDescription = storedMenuForm.menuDescription
-        menu.taste = storedMenuForm.taste
-        menu.image = storedMenuForm.image
+        menu.menuName = applyMenuDto.cakeSize + " 커스텀 케이크"
+        menu.menuSize = applyMenuDto.cakeSize
+        menu.price = applyMenuDto.cakePrice
+        menu.menuDescription = applyMenuDto.cakeDescription
+        menu.taste = applyMenuDto.cakeTaste
+        menu.image = applyMenuDto.cakeImage
 
         menuRepository.save(menu)
 
-        val consumerInputQuestions = storedMenuForm.consumerInput
-        val cakeInputQuestions = storedMenuForm.cakeInput
+        val consumerInputQuestions = applyMenuDto.consumerInput
+        val cakeInputQuestions = applyMenuDto.cakeInput
         val questions = questionRepository.findAllByMenuIdAndIsActivated(menuId, true)
 
 //        consumerInputQuestion.forEach {

@@ -49,8 +49,8 @@ class SellerController (
 
     @ApiOperation(value = "메뉴 수정")
     @PutMapping("/store/menu/{menuId}")
-    fun editMenu(@PathVariable menuId: Long, @RequestBody storedMenuForm: StoredMenuForm): ResponseEntity<DefaultResponseDto> {
-        return ApiResponse.success(HttpStatus.OK, sellerService.editMenu(menuId, storedMenuForm))
+    fun editMenu(@PathVariable menuId: Long, @RequestBody applyMenuDto: ApplyMenuDto): ResponseEntity<DefaultResponseDto> {
+        return ApiResponse.success(HttpStatus.OK, sellerService.editMenu(menuId, applyMenuDto))
     }
 
     @ApiOperation(value = "휴일 지정")
