@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import refresh.onecake.member.adapter.api.dto.DefaultResponseDto
+import refresh.onecake.member.adapter.api.dto.MemberInformation
 import refresh.onecake.member.application.MemberInfo
 import refresh.onecake.member.application.S3Uploader
 
@@ -22,5 +23,11 @@ class MemberController (
     @PostMapping("/image")
     fun registerStoreImage(@RequestPart("image") image:MultipartFile): String {
         return memberInfo.registerImage(image)
+    }
+
+    @ApiOperation(value = "사용자 정보")
+    @GetMapping("")
+    fun getMemberInfo(): ResponseEntity<MemberInformation> {
+        return ApiResponse.success(HttpStatus.OK, memberInfo.getMemberInfo())
     }
 }
