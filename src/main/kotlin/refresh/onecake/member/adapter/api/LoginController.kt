@@ -49,7 +49,7 @@ class LoginController (
     }
 
     @ApiOperation(value = "로그아웃")
-    @PostMapping("/logout")
+    @DeleteMapping("/logout")
     fun logout(): ResponseEntity<DefaultResponseDto> {
         return ApiResponse.success(HttpStatus.OK, loginService.logout())
     }

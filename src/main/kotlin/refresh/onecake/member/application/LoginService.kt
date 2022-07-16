@@ -130,7 +130,7 @@ class LoginService(
 
     fun logout(): DefaultResponseDto {
         val id = SecurityUtil.getCurrentMemberId()
-        redisTemplate.delete("RT:$id")
+        redisTemplate.opsForValue().set("RT:$id", "", 1, TimeUnit.MILLISECONDS)
         return DefaultResponseDto(true, "로그아웃 되었습니다.")
     }
 }

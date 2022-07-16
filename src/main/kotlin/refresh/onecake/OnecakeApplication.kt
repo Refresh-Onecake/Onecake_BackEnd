@@ -2,7 +2,9 @@ package refresh.onecake;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import org.springframework.context.annotation.Bean
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing
+import org.springframework.web.filter.HiddenHttpMethodFilter
 import java.time.ZoneId
 import java.util.*
 import javax.annotation.PostConstruct
