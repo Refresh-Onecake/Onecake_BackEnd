@@ -22,6 +22,8 @@ class Menu (
 
     var taste: String,
 
-    var image: String
+    var image: String,
+
+    var isActivated: Boolean
 
 ) : BaseTimeEntity()
