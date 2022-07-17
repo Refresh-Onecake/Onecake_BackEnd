@@ -1,6 +1,7 @@
 package refresh.onecake.member.application
 
 import org.modelmapper.ModelMapper
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import refresh.onecake.member.adapter.api.dto.*
 import refresh.onecake.member.adapter.infra.ForbiddenException
@@ -8,6 +9,7 @@ import refresh.onecake.member.application.util.SecurityUtil
 import refresh.onecake.member.domain.common.*
 import refresh.onecake.member.domain.member.MemberRepository
 import refresh.onecake.member.domain.seller.*
+import java.util.*
 
 @Service
 class SellerService (
@@ -76,7 +78,8 @@ class SellerService (
             image = applyMenuDto.cakeImage,
             price = applyMenuDto.cakePrice,
             menuDescription = applyMenuDto.cakeDescription,
-            taste = applyMenuDto.cakeTaste
+            taste = applyMenuDto.cakeTaste,
+            isActivated = true
         )
         val savedMenu = menuRepository.save(menu)
 
@@ -115,14 +118,18 @@ class SellerService (
 
     fun getMenus() : List<StoreMenuListAndIdDto>{
         val id = SecurityUtil.getCurrentMemberId()
-        return menuRepository.findAllByStoreIdOrderByMenuNameAsc(id).map{ modelMapper.map(it, StoreMenuListAndIdDto::class.java) }
+        return menuRepository.findAllByStoreIdAndIsActivatedOrderByMenuNameAsc(id, true).map{ modelMapper.map(it, StoreMenuListAndIdDto::class.java) }
     }
 
     fun deleteMenu(menuId: Long): DefaultResponseDto {
-        if (!menuRepository.existsById(menuId)) {
-            throw ForbiddenException("메뉴를 삭제할 수 없습니다.")
-        }
-        menuRepository.deleteById(menuId)
+        val id = SecurityUtil.getCurrentMemberId()
+
+        val menu = menuRepository.findByIdOrNull(menuId) ?: throw ForbiddenException("존재하지 않는 menuId입니다.")
+
+        if(menu.storeId != id) throw ForbiddenException("해당 메뉴의 판매자가 아닙니다.")
+
+        menu.isActivated = false
+        menuRepository.save(menu)
         return DefaultResponseDto(true, "메뉴 삭제를 성공했습니다.")
     }
 
@@ -142,14 +149,12 @@ class SellerService (
     }
 
     fun editMenu(menuId: Long, applyMenuDto: ApplyMenuDto): DefaultResponseDto {
-
-        //TODO : 메뉴 사이즈 unique
-
-        if (!menuRepository.existsById(menuId)) {
-            throw ForbiddenException("해당 메뉴 id는 존재하지 않습니다.")
-        }
         val id = SecurityUtil.getCurrentMemberId()
-        var menu = menuRepository.findMenuById(menuId)
+        val menu = menuRepository.findByIdOrNull(menuId) ?: throw ForbiddenException("해당 메뉴 id는 존재하지 않습니다.")
+        if(menu.storeId != id) throw ForbiddenException("해당 메뉴의 판매자가 아닙니다.")
+        if(menuRepository.existsByMenuSizeAndStoreId(applyMenuDto.cakeSize, menu.storeId)) throw ForbiddenException("해당 가게에 이미 존재하는 케이크 사이즈 입니다.")
+        if (!menu.isActivated) throw ForbiddenException("해당 메뉴는 삭제된 상태입니다.")
+
         menu.id = menuId
         menu.storeId = id
         menu.menuName = applyMenuDto.cakeSize + " 커스텀 케이크"
