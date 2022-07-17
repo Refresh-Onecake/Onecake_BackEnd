@@ -61,7 +61,7 @@ class ConsumerService (
 
     fun storeMenuList(storeId: Long): List<StoreMenuListDto>? {
         isActivatedStore(storeRepository.findStoreById(storeId))
-        return menuRepository.findAllByStoreIdOrderByMenuSizeAsc(storeId)
+        return menuRepository.findAllByStoreIdAndIsActivatedOrderByMenuNameAsc(storeId, true)
             ?.map { modelMapper.map(it, StoreMenuListDto::class.java) }
     }
 
