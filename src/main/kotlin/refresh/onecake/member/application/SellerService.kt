@@ -68,9 +68,11 @@ class SellerService (
     fun registerMenu(applyMenuDto: ApplyMenuDto): DefaultResponseDto {
 
         val id = SecurityUtil.getCurrentMemberId()
-//        if (menuRepository.existsByMenuSize(applyMenuDto.cakeSize)) {
-//            return DefaultResponseDto(false, "이미 등록한 케이크 사이즈입니다.")
-//        }
+
+        if (menuRepository.existsByMenuSizeAndStoreIdAndIsActivated(applyMenuDto.cakeSize, id, true)) {
+            return DefaultResponseDto(false, "해당 메뉴 사이즈가 이미 존재합니다.")
+        }
+
         val menu = Menu(
             storeId = id,
             menuName = applyMenuDto.cakeSize + " 커스텀 케이크",
@@ -152,8 +154,12 @@ class SellerService (
         val id = SecurityUtil.getCurrentMemberId()
         val menu = menuRepository.findByIdOrNull(menuId) ?: throw ForbiddenException("해당 메뉴 id는 존재하지 않습니다.")
         if(menu.storeId != id) throw ForbiddenException("해당 메뉴의 판매자가 아닙니다.")
-        if(menuRepository.existsByMenuSizeAndStoreId(applyMenuDto.cakeSize, menu.storeId)) throw ForbiddenException("해당 가게에 이미 존재하는 케이크 사이즈 입니다.")
         if (!menu.isActivated) throw ForbiddenException("해당 메뉴는 삭제된 상태입니다.")
+
+        val isExistingMenuId = menuRepository.findByMenuSizeAndStoreIdAndIsActivated(applyMenuDto.cakeSize, id, true)?.id
+        if (isExistingMenuId != null && menuId != isExistingMenuId) {
+            return DefaultResponseDto(false, "해당 메뉴 사이즈가 이미 존재합니다.")
+        }
 
         menu.id = menuId
         menu.storeId = id
