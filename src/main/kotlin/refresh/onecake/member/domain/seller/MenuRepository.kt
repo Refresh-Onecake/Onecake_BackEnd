@@ -11,4 +11,6 @@ interface MenuRepository : JpaRepository<Menu, Long>{
     fun findAllByStoreIdOrderByMenuSizeAsc(storeId: Long): List<Menu>?
     fun findAllIdAndMenuSizeByStoreIdOrderByMenuSizeAsc(storeId: Long): List<MenuIdAndSizeDto>?
     fun existsByMenuSizeAndStoreId(menuSize: String, storeId: Long): Boolean
+    fun existsByMenuSizeAndStoreIdAndIsActivated(menuSize: String, storeId: Long, isActivate: Boolean): Boolean
+    fun findByMenuSizeAndStoreIdAndIsActivated(menuSize: String, storeId: Long, isActivate: Boolean): Menu?
 }

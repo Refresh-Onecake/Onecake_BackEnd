@@ -1,7 +1,5 @@
 package refresh.onecake.member.adapter.api
 
-import io.swagger.annotations.Api
-import io.swagger.annotations.ApiOperation
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -19,13 +17,13 @@ class MemberController (
     private val memberInfo: MemberInfo
 ){
 
-    @ApiOperation(value = "이미지 업로드")
+//    @Operation(value = "이미지 업로드")
     @PostMapping("/image")
     fun registerStoreImage(@RequestPart("image") image:MultipartFile): String {
         return memberInfo.registerImage(image)
     }
 
-    @ApiOperation(value = "사용자 정보")
+//    @Operation(value = "사용자 정보")
     @GetMapping("")
     fun getMemberInfo(): ResponseEntity<MemberInformation> {
         return ApiResponse.success(HttpStatus.OK, memberInfo.getMemberInfo())

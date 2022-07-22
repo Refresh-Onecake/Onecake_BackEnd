@@ -1,8 +1,7 @@
 package refresh.onecake.member.adapter.api
 
-import io.swagger.annotations.Api
-import io.swagger.annotations.ApiOperation
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -13,13 +12,13 @@ import refresh.onecake.member.adapter.api.SwaggerNotes.Companion.SIGNUP_MEMO
 import refresh.onecake.member.adapter.api.dto.*
 import refresh.onecake.member.application.LoginService
 
-@Api(tags = arrayOf(LOGIN_CONTROLLER_TAG), description = "회원가입, 로그인, 토큰 재발급")
+//@Tag(tags = arrayOf(LOGIN_CONTROLLER_TAG), description = "회원가입, 로그인, 토큰 재발급")
 @RequestMapping("/api/v1/auth")
 @RestController
 class LoginController (
     private val loginService: LoginService
 ){
-    @ApiOperation(value = "회원가입", notes = SIGNUP_MEMO)
+//    @Operation(summary = "회원가입", notes = SIGNUP_MEMO)
     @PostMapping("/signup")
     fun signup(@RequestBody signUpRequestDto: SignUpRequestDto): ResponseEntity<SignUpResponseDto> {
         val signUpResponseDto:SignUpResponseDto = loginService.signup(signUpRequestDto)
@@ -30,13 +29,13 @@ class LoginController (
         }
     }
 
-    @ApiOperation(value = "로그인", notes = LOGIN_MEMO)
+//    @Operation(summary = "로그인", notes = LOGIN_MEMO)
     @PostMapping("/login")
     fun login(@RequestBody loginRequestDto: LoginRequestDto): ResponseEntity<TokenRoleDto> {
         return ApiResponse.success(HttpStatus.OK,  loginService.login(loginRequestDto))
     }
 
-    @ApiOperation(value = "토큰 재발급", notes = REISSUE_MEMO)
+//    @Operation(summary = "토큰 재발급", notes = REISSUE_MEMO)
     @PostMapping("/reissue")
     fun reissue(@RequestBody tokenRequestDto: TokenRequestDto): ResponseEntity<TokenDto> {
         val tokenDto:TokenDto? = loginService.reissue(tokenRequestDto)
@@ -48,7 +47,7 @@ class LoginController (
         }
     }
 
-    @ApiOperation(value = "로그아웃")
+    @Operation(summary = "로그아웃")
     @PostMapping("/logout")
     fun logout(): ResponseEntity<DefaultResponseDto> {
         return ApiResponse.success(HttpStatus.OK, loginService.logout())
