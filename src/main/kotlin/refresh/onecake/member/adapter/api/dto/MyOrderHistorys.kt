@@ -9,4 +9,5 @@ data class MyOrderHistorys(
     val menuName: String,
     val menuPrice: Int,
     val menuImage: String,
+    val hasReview: Boolean
 )
