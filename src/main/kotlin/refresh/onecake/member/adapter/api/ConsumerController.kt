@@ -94,4 +94,11 @@ class ConsumerController (
     fun getOrderHistorys(): ResponseEntity<List<MyOrderHistorys>> {
         return ApiResponse.success(HttpStatus.OK, consumerService.getOrderHistorys())
     }
+
+    @Operation(summary = "소비자 - 특정 주문 내역 보기")
+    @GetMapping("orderHistory/{orderHistoryId}")
+    fun getSpecificOrderHistory(@PathVariable orderHistoryId: Long): ResponseEntity<SpecificOrderHistory> {
+        return ApiResponse.success(HttpStatus.OK, consumerService.getSpecificOrderHistory(orderHistoryId))
+    }
+
 }

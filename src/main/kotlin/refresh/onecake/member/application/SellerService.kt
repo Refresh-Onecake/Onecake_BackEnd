@@ -24,12 +24,13 @@ class SellerService (
     private val dayOffRepository: DayOffRepository,
     private val imageRepository: ImageRepository,
     private val orderHistoryRepository: OrderHistoryRepository,
-    private val orderSheetRepository: OrderSheetRepository,
     private val imageLikeRepository: ImageLikeRepository,
+    private val questionsAndAnswers: QuestionsAndAnswers,
     private val modelMapper: ModelMapper
 ){
 
     fun registerStore(applyStoreRequestDto: ApplyStoreRequestDto) : DefaultResponseDto{
+
         val id = SecurityUtil.getCurrentMemberId()
         if (storeRepository.existsById(id)) {
             return DefaultResponseDto(false, "이미 입점한 판매자 입니다.")
@@ -95,22 +96,22 @@ class SellerService (
         )
         imageRepository.save(image)
 
-        if (applyMenuDto.consumerInput?.isNotEmpty() == true) {
-            for (i in 0 until applyMenuDto.consumerInput!!.size){
-                var question = Question(
+        if (applyMenuDto.consumerInput.isNotEmpty()) {
+            for (i in 0 until applyMenuDto.consumerInput.size){
+                val question = Question(
                     menuId = savedMenu.id,
-                    question = applyMenuDto.consumerInput!![i],
+                    question = applyMenuDto.consumerInput[i],
                     isConsumerInput = true,
                     isActivated = true
                 )
                 questionRepository.save(question)
             }
         }
-        if (applyMenuDto.cakeInput?.isNotEmpty() == true) {
-            for (i in 0 until applyMenuDto.cakeInput!!.size){
-                var question = Question(
+        if (applyMenuDto.cakeInput.isNotEmpty()) {
+            for (i in 0 until applyMenuDto.cakeInput.size){
+                val question = Question(
                     menuId = savedMenu.id,
-                    question = applyMenuDto.cakeInput!![i],
+                    question = applyMenuDto.cakeInput[i],
                     isConsumerInput = false,
                     isActivated = true
                 )
@@ -245,13 +246,13 @@ class SellerService (
 
     fun getSpecificDatesOrder(day: String): OrdersClassifiedByState {
         val id = SecurityUtil.getCurrentMemberId()
-        var orders = orderHistoryRepository.findAllByStoreIdAndPickUpDay(id, day)
+        val orders = orderHistoryRepository.findAllByStoreIdAndPickUpDay(id, day)
 
-        var received = orders.filter { it.state == OrderState.RECEIVED }
-        var accepted = orders.filter { it.state == OrderState.ACCEPTED }
-        var making = orders.filter { it.state == OrderState.MAKING }
-        var completed = orders.filter { it.state == OrderState.COMPLETED }
-        var canceled = orders.filter { it.state == OrderState.CANCELED }
+        val received = orders.filter { it.state == OrderState.RECEIVED }
+        val accepted = orders.filter { it.state == OrderState.ACCEPTED }
+        val making = orders.filter { it.state == OrderState.MAKING }
+        val completed = orders.filter { it.state == OrderState.COMPLETED }
+        val canceled = orders.filter { it.state == OrderState.CANCELED }
 
         return OrdersClassifiedByState(
             received = convertOrderHistoryToMenuDetail(received),
@@ -263,11 +264,11 @@ class SellerService (
     }
 
     fun convertOrderHistoryToMenuDetail(orderHistory: List<OrderHistory>): List<MenuThumbNail>?{
-        var output: MutableList<MenuThumbNail>? = mutableListOf()
+        val output: MutableList<MenuThumbNail> = mutableListOf()
         for (i in orderHistory.indices) {
-            var menu = menuRepository.findMenuById(orderHistory[i].menuId)
+            val menu = menuRepository.findMenuById(orderHistory[i].menuId)
             println(menu.menuName)
-            output?.add(MenuThumbNail(
+            output.add(MenuThumbNail(
                 id = orderHistory[i].id,
                 storeMenuListDto = StoreMenuListDto(
                     image = menu.image,
@@ -276,39 +277,31 @@ class SellerService (
                     price = menu.price
                 )
             ))
-            println(output?.get(i)?.id)
+            println(output[i].id)
         }
-        return output?.toList()
+        return output.toList()
     }
 
     fun getSpecificOrder(orderId: Long) : SpecificOrderForm{
         val id = SecurityUtil.getCurrentMemberId()
-        var order = orderHistoryRepository.findOrderHistoryById(orderId)
+        val order = orderHistoryRepository.findOrderHistoryById(orderId)
         if (order.storeId != id) {
             throw ForbiddenException("요청을 보내는 유저는 해당 주문서의 판매자가 아닙니다.")
         }
         val menu = menuRepository.findMenuById(order.menuId)
-        val orderSheet = orderSheetRepository.findAllByOrderId(orderId)
-        val answers = orderSheet?.map { it.answer }
-        val questionIds = orderSheet?.map { it.questionId }
-
-        var forms: MutableList<String>? = mutableListOf()
-        for (i in questionIds?.indices!!) {
-            forms?.add(i, questionRepository.findQuestionById(questionIds[i]).question + " : " + answers?.get(i))
-        }
 
         return SpecificOrderForm(
             menuName = menu.menuName,
             price = menu.price,
             state = order.state.toString().lowercase(),
-            form = forms,
+            form = questionsAndAnswers.getQuestionsAndAnswers(orderId),
             memo = order.memo
         )
     }
 
     fun postMemo(orderId: Long, memo:Memo): DefaultResponseDto {
         val id = SecurityUtil.getCurrentMemberId()
-        var order = orderHistoryRepository.findOrderHistoryById(orderId)
+        val order = orderHistoryRepository.findOrderHistoryById(orderId)
         if (order.storeId != id) {
             throw ForbiddenException("메모를 등록하려는 유저는 해당 주문서의 판매자가 아닙니다.")
         }
@@ -319,22 +312,28 @@ class SellerService (
 
     fun changeOrderState(orderId: Long): DefaultResponseDto {
         val id = SecurityUtil.getCurrentMemberId()
-        var order = orderHistoryRepository.findOrderHistoryById(orderId)
+        val order = orderHistoryRepository.findOrderHistoryById(orderId)
         if (order.storeId != id) {
             throw ForbiddenException("주문서 상태 변경을 시도하는 유저는 해당 주문서의 판매자가 아닙니다.")
         }
 
-        if (order.state == OrderState.RECEIVED) {
-            order.state = OrderState.ACCEPTED
-        } else if (order.state == OrderState.ACCEPTED) {
-            order.state = OrderState.MAKING
-        } else if (order.state == OrderState.MAKING) {
-            order.state = OrderState.COMPLETED
-        } else if (order.state == OrderState.COMPLETED) {
-            order.state = OrderState.COMPLETED
-        } else if (order.state == OrderState.CANCELED) {
-            order.state = OrderState.RECEIVED
-            order.reasonForCanceled = null
+        when (order.state) {
+            OrderState.RECEIVED -> {
+                order.state = OrderState.ACCEPTED
+            }
+            OrderState.ACCEPTED -> {
+                order.state = OrderState.MAKING
+            }
+            OrderState.MAKING -> {
+                order.state = OrderState.COMPLETED
+            }
+            OrderState.COMPLETED -> {
+                order.state = OrderState.COMPLETED
+            }
+            OrderState.CANCELED -> {
+                order.state = OrderState.RECEIVED
+                order.reasonForCanceled = null
+            }
         }
         orderHistoryRepository.save(order)
         return DefaultResponseDto(true, "주문 상태를 다음 단계로 변경")
@@ -423,9 +422,9 @@ class SellerService (
     fun postImageLike(menuId: Long, imageId: Long): DefaultResponseDto {
         val id = SecurityUtil.getCurrentMemberId()
         val imageLike = imageLikeRepository.findImageLikeByMemberIdAndImageId(id, imageId)
-        if (imageLike != null) {
+        return if (imageLike != null) {
             imageLikeRepository.delete(imageLike)
-            return DefaultResponseDto(true, "이미지 좋아요를 취소하였습니다.")
+            DefaultResponseDto(true, "이미지 좋아요를 취소하였습니다.")
         } else {
             imageLikeRepository.save(
                 ImageLike(
@@ -433,7 +432,7 @@ class SellerService (
                     imageId = imageId
                 )
             )
-            return DefaultResponseDto(true, "이미지 좋아요를 추가하였습니다.")
+            DefaultResponseDto(true, "이미지 좋아요를 추가하였습니다.")
         }
     }
 
