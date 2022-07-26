@@ -5,5 +5,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ImageRepository : JpaRepository<Image, Long>{
-    fun findAllByMenuId(menuId: Long): List<Image>?
+    fun findAllByMenuId(menuId: Long): List<Image>
+    fun findImageById(id: Long): Image
 }
