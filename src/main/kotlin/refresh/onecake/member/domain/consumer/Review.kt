@@ -19,6 +19,8 @@ class Review (
 
     var image: String?,
 
-    var price: String
+    var price: String,
+
+    val orderHistoryId: Long
 
 ): BaseTimeEntity()

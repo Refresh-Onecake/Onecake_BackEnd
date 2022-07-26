@@ -214,7 +214,8 @@ class ConsumerService (
             menuId = orderHistory.menuId,
             content = postReview.content,
             image = postReview.image,
-            price = postReview.price
+            price = postReview.price,
+            orderHistoryId = orderHistory.id
         ))
         return DefaultResponseDto(true, "리뷰 작성을 완료하였습니다.")
     }
@@ -279,7 +280,8 @@ class ConsumerService (
                     orderState = orderHistory.state,
                     menuName = menu.menuName,
                     menuPrice = menu.price,
-                    menuImage = menu.image
+                    menuImage = menu.image,
+                    hasReview = reviewRepository.existsByOrderHistoryId(orderHistory.id)
                 )
             )
         }
