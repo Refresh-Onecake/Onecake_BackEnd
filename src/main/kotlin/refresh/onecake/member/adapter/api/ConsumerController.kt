@@ -88,4 +88,10 @@ class ConsumerController (
     fun getAllReviewsOfSpecificStore(@PathVariable storeId: Long): ResponseEntity<ReviewAndNum> {
         return ApiResponse.success(HttpStatus.OK, consumerService.getAllReviewsOfSpecificStore(storeId))
     }
+
+    @Operation(summary = "소비자 - 나의 주문 내역 보기")
+    @GetMapping("orderHistory")
+    fun getOrderHistorys(): ResponseEntity<List<MyOrderHistorys>> {
+        return ApiResponse.success(HttpStatus.OK, consumerService.getOrderHistorys())
+    }
 }
