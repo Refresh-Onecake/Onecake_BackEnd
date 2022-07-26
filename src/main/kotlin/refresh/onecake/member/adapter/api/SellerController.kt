@@ -18,11 +18,18 @@ class SellerController (
     private val sellerService: SellerService
 ){
 
-//    @Operation(summary = "입점 신청", notes = SwaggerNotes.REGISTER_STORE_MEMO)
+    @Operation(summary = "입점 신청")
     @PostMapping("/store")
     fun registerStore(@RequestBody applyStoreRequestDto: ApplyStoreRequestDto): ResponseEntity<DefaultResponseDto> {
         return ApiResponse.success(HttpStatus.OK, sellerService.registerStore(applyStoreRequestDto))
     }
+
+
+
+
+    /*
+        메뉴
+     */
 
     @Operation(summary = "메뉴 등록")
     @PostMapping("/store/menu")
@@ -42,17 +49,55 @@ class SellerController (
         return ApiResponse.success(HttpStatus.OK, sellerService.deleteMenu(menuId))
     }
 
-    @Operation(summary = "저장되어있던 메뉴및 주문서 데이터 불러오기")
-    @GetMapping("/store/menu/{menuId}")
-    fun getStoredMenuForm(@PathVariable menuId: Long): ResponseEntity<StoredMenuForm> {
-        return ApiResponse.success(HttpStatus.OK, sellerService.getStoredMenuForm(menuId))
+    @Operation(summary = "특정 메뉴의 이미지들 불러오기")
+    @GetMapping("/store/menu/{menuId}/image")
+    fun getImagesOfSpecificMenu(@PathVariable menuId: Long): ResponseEntity<MenuImageSetting> {
+        return ApiResponse.success(HttpStatus.OK, sellerService.getImagesOfSpecificMenu(menuId))
     }
+
+    @Operation(summary = "특정 메뉴의 이미지 추가하기")
+    @PostMapping("/store/menu/{menuId}/image")
+    fun postImage(
+        @PathVariable menuId: Long,
+        @RequestBody imageAndKeyword: ImageAndKeyword
+    ): ResponseEntity<DefaultResponseDto> {
+        return ApiResponse.success(HttpStatus.OK, sellerService.postImage(menuId, imageAndKeyword))
+    }
+
+    @Operation(summary = "특정 이미지 불러오기")
+    @GetMapping("/store/menu/{menuId}/image/{imageId}")
+    fun getImageDetail(@PathVariable menuId: Long, @PathVariable imageId: Long): ResponseEntity<ImageDetail>{
+        return ApiResponse.success(HttpStatus.OK, sellerService.getImageDetail(menuId, imageId))
+    }
+
+    @Operation(summary = "특정 이미지 좋아요하기")
+    @PostMapping("/store/menu/{menuId}/image/{imageId}/like")
+    fun postImageLike(@PathVariable menuId: Long, @PathVariable imageId: Long): ResponseEntity<DefaultResponseDto> {
+        return ApiResponse.success(HttpStatus.OK, sellerService.postImageLike(menuId, imageId))
+    }
+
+    /*
+        메뉴 수정
+     */
 
     @Operation(summary = "메뉴 수정")
     @PutMapping("/store/menu/{menuId}")
     fun editMenu(@PathVariable menuId: Long, @RequestBody applyMenuDto: ApplyMenuDto): ResponseEntity<DefaultResponseDto> {
         return ApiResponse.success(HttpStatus.OK, sellerService.editMenu(menuId, applyMenuDto))
     }
+
+    @Operation(summary = "저장되어있던 메뉴및 주문서 데이터 불러오기")
+    @GetMapping("/store/menu/{menuId}")
+    fun getStoredMenuForm(@PathVariable menuId: Long): ResponseEntity<StoredMenuForm> {
+        return ApiResponse.success(HttpStatus.OK, sellerService.getStoredMenuForm(menuId))
+    }
+
+
+
+
+    /*
+        휴일
+     */
 
     @Operation(summary = "휴일 지정")
     @PostMapping("/store/dayOff")
@@ -65,6 +110,12 @@ class SellerController (
     fun getDayOff(@PathVariable dayOff: String): ResponseEntity<DefaultResponseDto> {
         return ApiResponse.success(HttpStatus.OK, sellerService.getDayOff(dayOff))
     }
+
+
+
+    /*
+        주문서
+     */
 
     @Operation(summary = "특정 날짜의 주문들 가져오기")
     @GetMapping("/store/order/{day}")
@@ -96,24 +147,12 @@ class SellerController (
         return ApiResponse.success(HttpStatus.OK, sellerService.orderStateToCanceled(orderId, cancelReason))
     }
 
-//    @Operation(summary = "케이크 제작하기로 상태 변경")
-//    @PostMapping("/store/order/form/{orderId}/state/accepted")
-//    fun orderStateToMaking(@PathVariable orderId: Long): ResponseEntity<DefaultResponseDto> {
-//        return ApiResponse.success(HttpStatus.OK, sellerService.orderStateToMaking(orderId))
-//    }
-//
-//    @Operation(summary = "픽업 완료하기로 상태 변경")
-//    @PostMapping("/store/order/form/{orderId}/state/accepted")
-//    fun orderStateToCompleted(@PathVariable orderId: Long): ResponseEntity<DefaultResponseDto> {
-//        return ApiResponse.success(HttpStatus.OK, sellerService.orderStateToCompleted(orderId))
-//    }
-//
-//    @Operation(summary = "다시 진행하기로 상태 변경")
-//    @PostMapping("/store/order/form/{orderId}/state/accepted")
-//    fun orderStateToReceived(@PathVariable orderId: Long): ResponseEntity<DefaultResponseDto> {
-//        return ApiResponse.success(HttpStatus.OK, sellerService.orderStateToReceived(orderId))
-//    }
 
+
+
+    /*
+        기타
+     */
 
     @Operation(summary = "판매자의 카카오톡 url 가져오기")
     @GetMapping("/chat")

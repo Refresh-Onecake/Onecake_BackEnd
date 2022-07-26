@@ -95,13 +95,13 @@ class ConsumerService (
             storeName = store.storeName,
             menuName = menu.menuName,
             menuDescription = menu.menuDescription,
-            allImages = images?.map { modelMapper.map(it, MenuIdAndImage::class.java) },
-            birthdayImages = images?.filter { it.keyword == Keyword.BIRTHDAY }?.map { modelMapper.map(it, MenuIdAndImage::class.java) },
-            monthlyEventImages = images?.filter { it.keyword == Keyword.MONTHLY_EVENT }?.map { modelMapper.map(it, MenuIdAndImage::class.java) },
-            anniversaryImages = images?.filter { it.keyword == Keyword.ANNIVERSARY }?.map { modelMapper.map(it, MenuIdAndImage::class.java) },
-            employmentImages = images?.filter { it.keyword == Keyword.EMPLOYMENT }?.map { modelMapper.map(it, MenuIdAndImage::class.java) },
-            marriageImages = images?.filter { it.keyword == Keyword.MARRIAGE }?.map { modelMapper.map(it, MenuIdAndImage::class.java) },
-            dischargeImages = images?.filter { it.keyword == Keyword.DISCHARGE }?.map { modelMapper.map(it, MenuIdAndImage::class.java) }
+            allImages = images.map { modelMapper.map(it, MenuIdAndImage::class.java) },
+            birthdayImages = images.filter { it.keyword == Keyword.BIRTHDAY }.map { modelMapper.map(it, MenuIdAndImage::class.java) },
+            monthlyEventImages = images.filter { it.keyword == Keyword.MONTHLY_EVENT }.map { modelMapper.map(it, MenuIdAndImage::class.java) },
+            anniversaryImages = images.filter { it.keyword == Keyword.ANNIVERSARY }.map { modelMapper.map(it, MenuIdAndImage::class.java) },
+            employmentImages = images.filter { it.keyword == Keyword.EMPLOYMENT }.map { modelMapper.map(it, MenuIdAndImage::class.java) },
+            marriageImages = images.filter { it.keyword == Keyword.MARRIAGE }.map { modelMapper.map(it, MenuIdAndImage::class.java) },
+            dischargeImages = images.filter { it.keyword == Keyword.DISCHARGE }.map { modelMapper.map(it, MenuIdAndImage::class.java) }
         )
     }
 

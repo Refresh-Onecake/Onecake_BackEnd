@@ -7,6 +7,8 @@ import refresh.onecake.member.adapter.api.dto.*
 import refresh.onecake.member.adapter.infra.ForbiddenException
 import refresh.onecake.member.application.util.SecurityUtil
 import refresh.onecake.member.domain.common.*
+import refresh.onecake.member.domain.consumer.ImageLike
+import refresh.onecake.member.domain.consumer.ImageLikeRepository
 import refresh.onecake.member.domain.member.MemberRepository
 import refresh.onecake.member.domain.seller.*
 import java.util.*
@@ -23,6 +25,7 @@ class SellerService (
     private val imageRepository: ImageRepository,
     private val orderHistoryRepository: OrderHistoryRepository,
     private val orderSheetRepository: OrderSheetRepository,
+    private val imageLikeRepository: ImageLikeRepository,
     private val modelMapper: ModelMapper
 ){
 
@@ -368,5 +371,71 @@ class SellerService (
 
         return DefaultResponseDto(true, "탈퇴 처리가 완료되었습니다.")
     }
+
+    fun getImagesOfSpecificMenu(menuId: Long): MenuImageSetting {
+        val id = SecurityUtil.getCurrentMemberId()
+        val store = storeRepository.findStoreById(id)
+        val menu = menuRepository.findByIdOrNull(menuId) ?: throw ForbiddenException("접근할 수 없는 menu Id 입니다.")
+        val images = imageRepository.findAllByMenuId(menuId).map{ modelMapper.map(it, ImageIdAndImage::class.java) }
+        return MenuImageSetting(
+            storeName = store.storeName,
+            menuTaste = menu.taste,
+            images = images
+        )
+    }
+
+    fun postImage(menuId: Long, imageAndKeyword: ImageAndKeyword): DefaultResponseDto {
+        imageRepository.save(
+            Image(
+                menuId = menuId,
+                image = imageAndKeyword.image,
+                keyword = imageAndKeyword.keyword
+            )
+        )
+        return DefaultResponseDto(true, "이미지 등록을 성공하였습니다.")
+    }
+
+    fun getImageDetail(menuId: Long, imageId: Long): ImageDetail {
+        val id = SecurityUtil.getCurrentMemberId()
+        val store = storeRepository.findStoreById(id)
+        val menu = menuRepository.findMenuById(menuId)
+        val image = imageRepository.findImageById(imageId)
+
+        return if (image.keyword == null) {
+            ImageDetail(
+                storeName = store.storeName,
+                keyWord = menu.menuName,
+                imageDescription = menu.menuDescription,
+                image = image.image,
+                isLiked = imageLikeRepository.existsByMemberIdAndImageId(id, imageId)
+            )
+        } else {
+            ImageDetail(
+                storeName = store.storeName,
+                keyWord = image.keyword.toString(),
+                imageDescription = image.keyword.toString() + "기념 케이크에요.",
+                image = image.image,
+                isLiked = imageLikeRepository.existsByMemberIdAndImageId(id, imageId)
+            )
+        }
+    }
+
+    fun postImageLike(menuId: Long, imageId: Long): DefaultResponseDto {
+        val id = SecurityUtil.getCurrentMemberId()
+        val imageLike = imageLikeRepository.findImageLikeByMemberIdAndImageId(id, imageId)
+        if (imageLike != null) {
+            imageLikeRepository.delete(imageLike)
+            return DefaultResponseDto(true, "이미지 좋아요를 취소하였습니다.")
+        } else {
+            imageLikeRepository.save(
+                ImageLike(
+                    memberId = id,
+                    imageId = imageId
+                )
+            )
+            return DefaultResponseDto(true, "이미지 좋아요를 추가하였습니다.")
+        }
+    }
+
 
 }
