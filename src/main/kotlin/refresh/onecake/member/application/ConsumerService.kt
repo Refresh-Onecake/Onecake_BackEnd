@@ -16,6 +16,7 @@ import refresh.onecake.member.domain.seller.*
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 @Service
 class ConsumerService (
@@ -30,6 +31,7 @@ class ConsumerService (
     private val storeLikeRepository: StoreLikeRepository,
     private val reviewRepository: ReviewRepository,
     private val imageRepository: ImageRepository,
+    private val questionsAndAnswers: QuestionsAndAnswers,
     private val modelMapper: ModelMapper
 ){
 
@@ -42,7 +44,7 @@ class ConsumerService (
         val address = addressRepository.getById(storeId)
         val temp = store.storeName.elementAt(store.storeName.length - 1)
         val index = (temp - 0xAC00.toChar()) % 28
-        var description = if (temp < 0xAC00.toChar() || temp > 0xD7A3.toChar()) {
+        val description = if (temp < 0xAC00.toChar() || temp > 0xD7A3.toChar()) {
             address.sggNm + "에 위치한 " + store.storeName + "이에요."
         } else if (index > 0) {
             address.sggNm + "에 위치한 " + store.storeName + "이에요."
@@ -62,7 +64,7 @@ class ConsumerService (
     fun storeMenuList(storeId: Long): List<StoreMenuListDto>? {
         isActivatedStore(storeRepository.findStoreById(storeId))
         return menuRepository.findAllByStoreIdAndIsActivatedOrderByMenuNameAsc(storeId, true)
-            ?.map { modelMapper.map(it, StoreMenuListDto::class.java) }
+            .map { modelMapper.map(it, StoreMenuListDto::class.java) }
     }
 
     fun getStoreInformation(storeId: Long): StoreDetailInfoDto {
@@ -86,10 +88,10 @@ class ConsumerService (
     }
 
     fun getAllImagesOfSpecificMenu(storeId: Long, menuId: Long): MenuDescAndImages {
-        var images = imageRepository.findAllByMenuId(menuId)
-        var store = storeRepository.findStoreById(storeId)
+        val images = imageRepository.findAllByMenuId(menuId)
+        val store = storeRepository.findStoreById(storeId)
         isActivatedStore(store)
-        var menu = menuRepository.findMenuById(menuId)
+        val menu = menuRepository.findMenuById(menuId)
 
         return MenuDescAndImages(
             storeName = store.storeName,
@@ -109,8 +111,6 @@ class ConsumerService (
         isActivatedStore(storeRepository.findStoreById(storeId))
         val questions = questionRepository.findAllByMenuIdAndIsActivated(menuId, true)
         return OrderSheetTwoTypeDto(
-//            consumerInput = questions?.filter { it.isConsumerInput }?.map { modelMapper.map(it, IdAndQuestionDto::class.java) },
-//            cakeInput = questions?.filter { !it.isConsumerInput }?.map { modelMapper.map(it, IdAndQuestionDto::class.java) }
             consumerInput = questions?.filter { it.isConsumerInput && it.isActivated }?.map { question -> question.question },
             cakeInput = questions?.filter { !it.isConsumerInput && it.isActivated }?.map { question -> question.question }
         )
@@ -137,15 +137,13 @@ class ConsumerService (
 
         val questions = questionRepository.findAllByMenuIdAndIsActivated(menuId, true)
 
-        if (questions != null) {
-            for (i in questions.indices) {
-                var orderSheet = OrderSheet(
-                    questionId = questions[i].id,
-                    orderId = savedOrderHistory.id,
-                    answer = answersDto?.answers!![i]
-                )
-                orderSheetRepository.save(orderSheet)
-            }
+        for (i in questions.indices) {
+            val orderSheet = OrderSheet(
+                questionId = questions[i].id,
+                orderId = savedOrderHistory.id,
+                answer = answersDto.answers[i]
+            )
+            orderSheetRepository.save(orderSheet)
         }
 
         val member = memberRepository.getById(id).userName
@@ -172,14 +170,14 @@ class ConsumerService (
 
     fun getAllStoreByAddressAndFilter(addressAndFilter: AddressAndFilter): List<StoreThumbNail>? {
         val id = SecurityUtil.getCurrentMemberId()
-        var addressId: List<Long>? = addressRepository.findAllBySggNm(addressAndFilter.address)?.map { it.id }
-        var output: MutableList<StoreThumbNail> = mutableListOf()
+        val addressId: List<Long>? = addressRepository.findAllBySggNm(addressAndFilter.address)?.map { it.id }
+        val output: MutableList<StoreThumbNail> = mutableListOf()
         for (i in addressId?.indices!!) {
-            var store = storeRepository.findByAddressIdAndIsActivated(addressId[i], true) ?: continue
+            val store = storeRepository.findByAddressIdAndIsActivated(addressId[i], true) ?: continue
             output.add(StoreThumbNail(
                 storeId = store.id,
                 storeImage = store.storeImage,
-                guName = addressRepository.getById(addressId!![i]).sggNm!!,
+                guName = addressRepository.getById(addressId[i]).sggNm!!,
                 storeName = store.storeName,
                 likedNum = storeLikeRepository.countByStoreId(store.id),
                 reviewNum = reviewRepository.countByStoreId(store.id),
@@ -223,11 +221,11 @@ class ConsumerService (
     fun getAllReviewsOfSpecificStore(storeId: Long): ReviewAndNum{
         isActivatedStore(storeRepository.findStoreById(storeId))
         val reviews = reviewRepository.findAllByStoreId(storeId)
-        var outputs: MutableList<ReviewThumbnail> = mutableListOf()
+        val outputs: MutableList<ReviewThumbnail> = mutableListOf()
         for (i in reviews?.indices!!) {
 
             val member = memberRepository.getById(reviews[i].consumerId)
-            var timeHistory = calculateTimeDiff(reviews[i].createdAt)
+            val timeHistory = calculateTimeDiff(reviews[i].createdAt)
 
             outputs.add(ReviewThumbnail(
                 profileImg = member.profileImg,
@@ -244,19 +242,18 @@ class ConsumerService (
 
     fun calculateTimeDiff(time: LocalDateTime) : String{
         val now = LocalDateTime.now()
-        var timeHistory: String
-        if (now.year - time.year != 0) {
-            timeHistory = (now.year - time.year).toString() + "년 전"
+        val timeHistory: String = if (now.year - time.year != 0) {
+            (now.year - time.year).toString() + "년 전"
         } else if (now.month.value - time.month.value != 0) {
-            timeHistory = (now.month.value - time.month.value).toString() + "달 전"
+            (now.month.value - time.month.value).toString() + "달 전"
         } else if (now.dayOfMonth - time.dayOfMonth != 0) {
-            timeHistory = (now.dayOfMonth - time.dayOfMonth).toString() + "일 전"
+            (now.dayOfMonth - time.dayOfMonth).toString() + "일 전"
         } else if (now.hour - time.hour != 0) {
-            timeHistory = (now.hour - time.hour).toString() + "시간 전"
+            (now.hour - time.hour).toString() + "시간 전"
         } else if (now.minute - time.minute != 0) {
-            timeHistory = (now.minute - time.minute).toString() + "분 전"
+            (now.minute - time.minute).toString() + "분 전"
         } else {
-            timeHistory = "1분 전"
+            "1분 전"
         }
         return timeHistory
     }
@@ -268,7 +265,7 @@ class ConsumerService (
     fun getOrderHistorys(): List<MyOrderHistorys> {
         val id = SecurityUtil.getCurrentMemberId()
         val orderHistorys = orderHistoryRepository.findAllByUserId(id)
-        var outputs: MutableList<MyOrderHistorys> = mutableListOf()
+        val outputs: MutableList<MyOrderHistorys> = mutableListOf()
         for (i in orderHistorys.indices) {
             val orderHistory = orderHistorys[i]
             val store = storeRepository.findStoreById(orderHistory.storeId)
@@ -287,4 +284,48 @@ class ConsumerService (
         }
         return outputs
     }
+
+    fun getSpecificOrderHistory(orderHistoryId: Long): SpecificOrderHistory {
+        val orderHistory = orderHistoryRepository.findOrderHistoryById(orderHistoryId)
+        val store = storeRepository.findStoreById(orderHistory.storeId)
+        val menu = menuRepository.findMenuById(orderHistory.menuId)
+
+        val orderState = when (orderHistory.state) {
+            OrderState.RECEIVED -> {
+                "주문이 사장님께 전달되었어요!"
+            }
+            OrderState.ACCEPTED -> {
+                "결제까지 완료되었어요!"
+            }
+            OrderState.MAKING -> {
+                "케이크를 제작 중이에요!"
+            }
+            OrderState.COMPLETED -> {
+                "픽업이 완료되었어요!"
+            }
+            else -> {
+                "주문이 취소되었습니다(" + orderHistory.reasonForCanceled + ")"
+            }
+        }
+
+        val orderTime = orderHistory.createdAt
+
+        val pickUpDate = orderHistory.pickUpDay.split("-")
+        val pickUpTime = orderHistory.pickUpTime.split(":")
+        val ampmOfPickUpTime = if(pickUpTime[0].toInt() > 11) "오후 " else "오전 "
+        val hourOfPickUpTime = if(pickUpTime[0].toInt() > 12) pickUpTime[0].toInt() - 12 else pickUpTime[0].toInt()
+
+        val hourOfPickUpTimeString = if(hourOfPickUpTime < 10) "0$hourOfPickUpTime" else hourOfPickUpTime
+
+        return SpecificOrderHistory(
+            storeName = store.storeName,
+            orderState = orderState,
+            orderTime = orderTime.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 a hh:mm")),
+            pickUpTime = pickUpDate[0] + "년 " + pickUpDate[1] + "월 " + pickUpDate[2] + "일 " + ampmOfPickUpTime + hourOfPickUpTimeString + ":" + pickUpTime[1],
+            menuName = menu.menuName,
+            menuPrice = menu.price,
+            form = questionsAndAnswers.getQuestionsAndAnswers(orderHistoryId)
+        )
+    }
+
 }
