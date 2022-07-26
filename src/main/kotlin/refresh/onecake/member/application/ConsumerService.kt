@@ -80,7 +80,7 @@ class ConsumerService (
         isActivatedStore(storeRepository.findStoreById(storeId))
         return StoreNameAndCakeSizesDto(
             storeName = storeRepository.findStoreById(storeId).storeName,
-            sizes = menuRepository.findAllIdAndMenuSizeByStoreIdOrderByMenuSizeAsc(storeId)
+            sizes = menuRepository.findAllIdAndMenuSizeByStoreIdAndIsActivatedOrderByMenuSizeAsc(storeId, true)
                 ?.map{modelMapper.map(it, MenuIdAndSizeDto::class.java)}
         )
     }
@@ -262,5 +262,27 @@ class ConsumerService (
 
     fun isActivatedStore(store: Store){
         if(!store.isActivated) throw ForbiddenException("접근할 수 없는 가게입니다.")
+    }
+
+    fun getOrderHistorys(): List<MyOrderHistorys> {
+        val id = SecurityUtil.getCurrentMemberId()
+        val orderHistorys = orderHistoryRepository.findAllByUserId(id)
+        var outputs: MutableList<MyOrderHistorys> = mutableListOf()
+        for (i in orderHistorys.indices) {
+            val orderHistory = orderHistorys[i]
+            val store = storeRepository.findStoreById(orderHistory.storeId)
+            val menu = menuRepository.findMenuById(orderHistory.menuId)
+            outputs.add(
+                MyOrderHistorys(
+                    orderHistoryId = orderHistory.id,
+                    storeName = store.storeName,
+                    orderState = orderHistory.state,
+                    menuName = menu.menuName,
+                    menuPrice = menu.price,
+                    menuImage = menu.image
+                )
+            )
+        }
+        return outputs
     }
 }
