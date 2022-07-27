@@ -13,10 +13,9 @@ import refresh.onecake.member.domain.consumer.StoreLike
 import refresh.onecake.member.domain.consumer.StoreLikeRepository
 import refresh.onecake.member.domain.member.MemberRepository
 import refresh.onecake.member.domain.seller.*
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
+import java.time.*
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 @Service
 class ConsumerService (
@@ -309,19 +308,15 @@ class ConsumerService (
         }
 
         val orderTime = orderHistory.createdAt
-
-        val pickUpDate = orderHistory.pickUpDay.split("-")
-        val pickUpTime = orderHistory.pickUpTime.split(":")
-        val ampmOfPickUpTime = if(pickUpTime[0].toInt() > 11) "오후 " else "오전 "
-        val hourOfPickUpTime = if(pickUpTime[0].toInt() > 12) pickUpTime[0].toInt() - 12 else pickUpTime[0].toInt()
-
-        val hourOfPickUpTimeString = if(hourOfPickUpTime < 10) "0$hourOfPickUpTime" else hourOfPickUpTime
+        val pickUpDate = LocalDate.parse(orderHistory.pickUpDay, DateTimeFormatter.ISO_DATE)
+        val pickUpTime = LocalTime.parse(orderHistory.pickUpTime)
 
         return SpecificOrderHistory(
             storeName = store.storeName,
             orderState = orderState,
-            orderTime = orderTime.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 a hh:mm")),
-            pickUpTime = pickUpDate[0] + "년 " + pickUpDate[1] + "월 " + pickUpDate[2] + "일 " + ampmOfPickUpTime + hourOfPickUpTimeString + ":" + pickUpTime[1],
+            orderTime = orderTime.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 a hh:mm").withLocale(Locale.KOREA)),
+            pickUpTime = pickUpDate.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 "))
+                    + pickUpTime.format(DateTimeFormatter.ofPattern("a hh:mm").withLocale(Locale.KOREA)),
             menuName = menu.menuName,
             menuPrice = menu.price,
             form = questionsAndAnswers.getQuestionsAndAnswers(orderHistoryId)
