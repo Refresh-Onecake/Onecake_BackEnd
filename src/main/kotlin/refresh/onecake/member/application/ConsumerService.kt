@@ -323,4 +323,30 @@ class ConsumerService (
         )
     }
 
+    fun getWeeksHottestCake(): List<HomeImages> {
+        val images = imageRepository.findTop10ByIsActivatedOrderByLikeNumDesc(true)
+
+        val menus: MutableList<Menu> = mutableListOf()
+        for (i in images.indices) {
+            menus.add(menuRepository.findMenuById(images[i].menuId))
+        }
+
+        val stores: MutableList<Store> = mutableListOf()
+        for (i in images.indices) {
+            stores.add(storeRepository.findStoreById(menus[i].storeId))
+        }
+
+        val outputs: MutableList<HomeImages> = mutableListOf()
+        for (i in images.indices) {
+            outputs.add(
+                HomeImages(
+                    image = images[i].image,
+                    storeId = stores[i].id,
+                    menuId = menus[i].id,
+                    imageId = images[i].id
+                )
+            )
+        }
+        return outputs
+    }
 }

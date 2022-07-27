@@ -16,4 +16,8 @@ class Image (
     @Enumerated(value = EnumType.STRING)
     var keyword: Keyword?,
 
+    var likeNum: Long,
+
+    var isActivated: Boolean
+
 )

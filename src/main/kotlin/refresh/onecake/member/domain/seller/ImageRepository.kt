@@ -8,4 +8,5 @@ interface ImageRepository : JpaRepository<Image, Long>{
     fun findAllByMenuId(menuId: Long): List<Image>
     fun findImageById(id: Long): Image
     fun findAllByMenuIdAndKeywordIsNotNull(menuId: Long): List<Image>
+    fun findTop10ByIsActivatedOrderByLikeNumDesc(isActivated: Boolean): List<Image>
 }
