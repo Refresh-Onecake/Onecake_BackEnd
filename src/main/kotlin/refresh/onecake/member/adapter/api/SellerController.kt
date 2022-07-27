@@ -76,6 +76,12 @@ class SellerController (
         return ApiResponse.success(HttpStatus.OK, sellerService.postImageLike(menuId, imageId))
     }
 
+    @Operation(summary = "특정 이미지 삭제하기")
+    @DeleteMapping("/store/menu/{menuId}/image/{imageId}")
+    fun deleteImage(@PathVariable menuId: Long, @PathVariable imageId: Long): ResponseEntity<DefaultResponseDto> {
+        return ApiResponse.success(HttpStatus.OK, sellerService.deleteImage(imageId))
+    }
+
     /*
         메뉴 수정
      */
