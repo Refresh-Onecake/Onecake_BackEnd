@@ -375,7 +375,7 @@ class SellerService (
         val id = SecurityUtil.getCurrentMemberId()
         val store = storeRepository.findStoreById(id)
         val menu = menuRepository.findByIdOrNull(menuId) ?: throw ForbiddenException("접근할 수 없는 menu Id 입니다.")
-        val images = imageRepository.findAllByMenuId(menuId).map{ modelMapper.map(it, ImageIdAndImage::class.java) }
+        val images = imageRepository.findAllByMenuIdAndKeywordIsNotNull(menuId).map{ modelMapper.map(it, ImageIdAndImage::class.java) }
         return MenuImageSetting(
             storeName = store.storeName,
             menuTaste = menu.taste,
@@ -434,6 +434,12 @@ class SellerService (
             )
             DefaultResponseDto(true, "이미지 좋아요를 추가하였습니다.")
         }
+    }
+
+    fun deleteImage(imageId: Long): DefaultResponseDto {
+        val image = imageRepository.findByIdOrNull(imageId) ?: throw ForbiddenException("imageId에 해당하는 이미지가 존재하지 않습니다.")
+        imageRepository.delete(image)
+        return DefaultResponseDto(true, "이미지를 삭제하였습니다.")
     }
 
 
