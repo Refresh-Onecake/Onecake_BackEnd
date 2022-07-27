@@ -92,7 +92,9 @@ class SellerService (
         val image = Image(
             menuId = savedMenu.id,
             image = applyMenuDto.cakeImage,
-            keyword = null
+            keyword = null,
+            likeNum = 0,
+            isActivated = true
         )
         imageRepository.save(image)
 
@@ -136,6 +138,13 @@ class SellerService (
 
         menu.isActivated = false
         menuRepository.save(menu)
+
+        val images = imageRepository.findAllByMenuId(menuId)
+        for (i in images.indices) {
+            images[i].isActivated = false
+            imageRepository.save(images[i])
+        }
+
         return DefaultResponseDto(true, "메뉴 삭제를 성공했습니다.")
     }
 
@@ -383,7 +392,9 @@ class SellerService (
             Image(
                 menuId = menuId,
                 image = imageAndKeyword.image,
-                keyword = imageAndKeyword.keyword
+                keyword = imageAndKeyword.keyword,
+                likeNum = 0,
+                isActivated = true
             )
         )
         return DefaultResponseDto(true, "이미지 등록을 성공하였습니다.")
@@ -417,10 +428,15 @@ class SellerService (
     fun postImageLike(menuId: Long, imageId: Long): DefaultResponseDto {
         val id = SecurityUtil.getCurrentMemberId()
         val imageLike = imageLikeRepository.findImageLikeByMemberIdAndImageId(id, imageId)
+        val image = imageRepository.findByIdOrNull(imageId) ?: throw ForbiddenException("존재하지 않는 imageId입니다.")
         return if (imageLike != null) {
+            image.likeNum--
+            imageRepository.save(image)
             imageLikeRepository.delete(imageLike)
             DefaultResponseDto(true, "이미지 좋아요를 취소하였습니다.")
         } else {
+            image.likeNum++
+            imageRepository.save(image)
             imageLikeRepository.save(
                 ImageLike(
                     memberId = id,
@@ -433,7 +449,8 @@ class SellerService (
 
     fun deleteImage(imageId: Long): DefaultResponseDto {
         val image = imageRepository.findByIdOrNull(imageId) ?: throw ForbiddenException("imageId에 해당하는 이미지가 존재하지 않습니다.")
-        imageRepository.delete(image)
+        image.isActivated = false
+        imageRepository.save(image)
         return DefaultResponseDto(true, "이미지를 삭제하였습니다.")
     }
 

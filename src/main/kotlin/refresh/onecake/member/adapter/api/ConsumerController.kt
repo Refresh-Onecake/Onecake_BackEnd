@@ -101,4 +101,10 @@ class ConsumerController (
         return ApiResponse.success(HttpStatus.OK, consumerService.getSpecificOrderHistory(orderHistoryId))
     }
 
+    @Operation(summary = "소비자 - 이번주 핫한 케이크 이미지 불러오기")
+    @GetMapping("home/hot")
+    fun getWeeksHottestCake(): ResponseEntity<List<HomeImages>>{
+        return ApiResponse.success(HttpStatus.OK, consumerService.getWeeksHottestCake())
+    }
+
 }
