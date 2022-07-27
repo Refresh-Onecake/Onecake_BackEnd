@@ -117,7 +117,7 @@ class ConsumerService (
     }
 
     fun getStoreDayOffs(storeId: Long) : List<String>? {
-        return dayOffRepository.findAllByStoreId(storeId)?.map { it.day }
+        return dayOffRepository.findAllByStoreIdOrderByDayAsc(storeId)?.map { it.day }
     }
 
     fun postOrderSheet(storeId: Long, menuId: Long, answersDto: AnswersDto): DefaultResponseDto {
