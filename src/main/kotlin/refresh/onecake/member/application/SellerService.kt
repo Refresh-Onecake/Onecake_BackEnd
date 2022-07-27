@@ -218,30 +218,25 @@ class SellerService (
 
     }
 
-    fun setDayOff(dayAndName: DayAndName): DefaultResponseDto {
+    fun setDayOff(dayOffDto: DayOffDto): DefaultResponseDto {
         val id = SecurityUtil.getCurrentMemberId()
-        val dayOff = dayOffRepository.findByStoreIdAndDay(id, dayAndName.dayOff)
+        val dayOff = dayOffRepository.findByStoreIdAndDay(id, dayOffDto.dayOff)
         return if (dayOff != null) {
             dayOffRepository.delete(dayOff)
             DefaultResponseDto(true, "휴무 일정을 취소하였습니다.")
         } else {
             dayOffRepository.save(DayOff(
                 storeId = id,
-                day= dayAndName.dayOff,
-                dayOffName = dayAndName.dayOffName
+                day= dayOffDto.dayOff
             ))
             DefaultResponseDto(true, "휴무 일정을 등록하였습니다.")
         }
 
     }
 
-    fun getDayOff(day: String): DefaultResponseDto {
+    fun getDayOff(): List<String> {
         val id = SecurityUtil.getCurrentMemberId()
-        return if (dayOffRepository.existsByStoreIdAndDay(id, day)) {
-            DefaultResponseDto(true, "휴무로 지정된 날짜입니다.")
-        } else {
-            DefaultResponseDto(true, "휴무로 지정되지 않은 날짜입니다.")
-        }
+        return dayOffRepository.findAllByStoreIdOrderByDayAsc(id).map { it.day }
     }
 
     fun getSpecificDatesOrder(day: String): OrdersClassifiedByState {

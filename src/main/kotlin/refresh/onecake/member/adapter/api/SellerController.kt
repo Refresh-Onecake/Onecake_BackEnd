@@ -107,14 +107,14 @@ class SellerController (
 
     @Operation(summary = "휴일 지정")
     @PostMapping("/store/dayOff")
-    fun setDayOff(@RequestBody dayAndName: DayAndName): ResponseEntity<DefaultResponseDto> {
-        return ApiResponse.success(HttpStatus.OK, sellerService.setDayOff(dayAndName))
+    fun setDayOff(@RequestBody dayOffDto: DayOffDto): ResponseEntity<DefaultResponseDto> {
+        return ApiResponse.success(HttpStatus.OK, sellerService.setDayOff(dayOffDto))
     }
 
     @Operation(summary = "휴일 가져오기")
-    @GetMapping("/store/dayOff/{dayOff}")
-    fun getDayOff(@PathVariable dayOff: String): ResponseEntity<DefaultResponseDto> {
-        return ApiResponse.success(HttpStatus.OK, sellerService.getDayOff(dayOff))
+    @GetMapping("/store/dayOff")
+    fun getDayOff(): ResponseEntity<List<String>> {
+        return ApiResponse.success(HttpStatus.OK, sellerService.getDayOff())
     }
 
 
