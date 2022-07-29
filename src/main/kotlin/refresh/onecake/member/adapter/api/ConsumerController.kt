@@ -107,4 +107,16 @@ class ConsumerController (
         return ApiResponse.success(HttpStatus.OK, consumerService.getWeeksHottestCake())
     }
 
+    @Operation(summary = "소비자 - 우리 동네 케이크 불러오기")
+    @GetMapping("home/neighborhood")
+    fun getNeighborhoodStore(): ResponseEntity<List<NeighborhoodStore>> {
+        return ApiResponse.success(HttpStatus.OK, consumerService.getNeighborhoodStore())
+    }
+
+    @Operation(summary = "소비자 - 키워드별 케이크 불러오기")
+    @GetMapping("home/keyword")
+    fun getKeyWordCakes(): ResponseEntity<List<KeywordImages>> {
+        return ApiResponse.success(HttpStatus.OK, consumerService.getKeywordCakes())
+    }
+
 }

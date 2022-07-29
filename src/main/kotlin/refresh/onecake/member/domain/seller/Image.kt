@@ -1,5 +1,6 @@
 package refresh.onecake.member.domain.seller
 
+import refresh.onecake.member.domain.BaseTimeEntity
 import javax.persistence.*
 
 @Entity
@@ -20,4 +21,4 @@ class Image (
 
     var isActivated: Boolean
 
-)
+) : BaseTimeEntity()
