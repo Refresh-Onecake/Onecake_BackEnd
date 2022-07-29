@@ -30,3 +30,8 @@ interface MenuIdAndStoreId {
     val menuId: Long
     val storeId: Long
 }
+
+interface QuestionAndAnswer{
+    val question: String
+    val answer: String
+}
