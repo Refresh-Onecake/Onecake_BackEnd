@@ -379,7 +379,7 @@ class SellerService (
         val id = SecurityUtil.getCurrentMemberId()
         val store = storeRepository.findStoreById(id)
         val menu = menuRepository.findByIdOrNull(menuId) ?: throw ForbiddenException("접근할 수 없는 menu Id 입니다.")
-        val images = imageRepository.findAllByMenuIdAndKeywordIsNotNull(menuId).map{ modelMapper.map(it, ImageIdAndImage::class.java) }
+        val images = imageRepository.findAllByMenuIdAndIsActivatedAndKeywordIsNotNull(menuId, true).map{ modelMapper.map(it, ImageIdAndImage::class.java) }
         return MenuImageSetting(
             storeName = store.storeName,
             menuTaste = menu.taste,

@@ -1,6 +1,5 @@
 package refresh.onecake.member.application
 
-import org.apache.tomcat.jni.Local
 import org.modelmapper.ModelMapper
 import org.springframework.stereotype.Service
 import refresh.onecake.member.adapter.api.dto.*
@@ -349,4 +348,44 @@ class ConsumerService (
         }
         return outputs
     }
+
+    fun getKeywordCakes(): List<KeywordImages> {
+
+        var keywordImages = mutableListOf<KeywordImages>()
+        getKeyWordImage(Keyword.BIRTHDAY)?.let { keywordImages.add(it) }
+        getKeyWordImage(Keyword.MONTHLY_EVENT)?.let { keywordImages.add(it) }
+        getKeyWordImage(Keyword.ANNIVERSARY)?.let { keywordImages.add(it) }
+        getKeyWordImage(Keyword.EMPLOYMENT)?.let { keywordImages.add(it) }
+        getKeyWordImage(Keyword.MARRIAGE)?.let { keywordImages.add(it) }
+        getKeyWordImage(Keyword.DISCHARGE)?.let { keywordImages.add(it) }
+        getKeyWordImage(Keyword.ETC)?.let { keywordImages.add(it) }
+
+        return keywordImages
+    }
+
+    fun getKeyWordImage(keyword: Keyword): KeywordImages? {
+        val keyWordImage = imageRepository.findFirstByKeywordAndIsActivatedOrderByCreatedAtDesc(keyword, true)
+        return if (keyWordImage != null) {
+            val menuAndStore = menuRepository.findMenuWithStore(keyWordImage.menuId)
+            KeywordImages(
+                image = keyWordImage.image,
+                storeId = menuAndStore.storeId,
+                menuId = menuAndStore.menuId,
+                imageId = keyWordImage.id,
+                keyword = keyword
+            )
+        }else null
+    }
+
+    fun getNeighborhoodStore(): List<NeighborhoodStore> {
+        val addresses = addressRepository.findAllBySggNm("마포구")
+        val stores: MutableList<Store> = mutableListOf()
+        for (i in addresses?.indices!!) {
+            val store = storeRepository.findByAddressIdAndIsActivated(addresses[i].id, true)
+            if(store != null) stores.add(store)
+            if(stores.size >= 10) break
+        }
+        return stores.map { modelMapper.map(it, NeighborhoodStore::class.java) }
+    }
+
 }

@@ -25,3 +25,8 @@ data class ImageDetail(
     val image: String,
     val isLiked: Boolean
 )
+
+interface MenuIdAndStoreId {
+    val menuId: Long
+    val storeId: Long
+}
