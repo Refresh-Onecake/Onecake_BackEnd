@@ -10,4 +10,6 @@ interface ImageRepository : JpaRepository<Image, Long>{
     fun findAllByMenuIdAndIsActivatedAndKeywordIsNotNull(menuId: Long, isActivated: Boolean): List<Image>
     fun findTop10ByIsActivatedOrderByLikeNumDesc(isActivated: Boolean): List<Image>
     fun findFirstByKeywordAndIsActivatedOrderByCreatedAtDesc(keyword: Keyword, isActivated: Boolean): Image?
+
+
 }

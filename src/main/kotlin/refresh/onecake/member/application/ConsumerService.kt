@@ -318,7 +318,7 @@ class ConsumerService (
                     + pickUpTime.format(DateTimeFormatter.ofPattern("a hh:mm").withLocale(Locale.KOREA)),
             menuName = menu.menuName,
             menuPrice = menu.price,
-            form = questionsAndAnswers.getQuestionsAndAnswers(orderHistoryId)
+            form = questionsAndAnswers.getQuestionsAndAnswersWhoseConsumerInputIsFalse(orderHistoryId)
         )
     }
 
