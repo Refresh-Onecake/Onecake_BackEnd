@@ -30,7 +30,7 @@ class TokenProvider {
     companion object {
         const val AUTHORITIES_KEY = "auth"
         const val BEARER_TYPE = "bearer"
-        const val ACCESS_TOKEN_EXPIRE_TIME = (1000 * 60 * 60 * 24 * 2).toLong()
+        const val ACCESS_TOKEN_EXPIRE_TIME = (1000 * 60 * 60 * 24 * 365).toLong()
         const val REFRESH_TOKEN_EXPIRE_TIME = (1000 * 60 * 60 * 24 * 7).toLong()
     }
 
