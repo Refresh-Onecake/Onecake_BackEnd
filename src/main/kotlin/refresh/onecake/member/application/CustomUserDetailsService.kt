@@ -7,9 +7,8 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
-import refresh.onecake.member.domain.member.Member
-import refresh.onecake.member.domain.member.MemberRepository
-import refresh.onecake.member.domain.seller.SellerRepository
+import refresh.onecake.member.domain.Member
+import refresh.onecake.member.domain.MemberRepository
 import java.util.*
 import javax.transaction.Transactional
 
@@ -21,7 +20,7 @@ class CustomUserDetailsService(
 
     @Transactional
     override fun loadUserByUsername(userId: String): UserDetails {
-        val member:Member? = memberRepository.findByUserId(userId)
+        val member: Member? = memberRepository.findByUserId(userId)
         if (member != null) {
             return createUserDetails(member)
         } else {
