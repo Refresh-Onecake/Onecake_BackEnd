@@ -83,4 +83,13 @@ class StoreController (
         )
     }
 
+    @Operation(summary = "판매 통계")
+    @GetMapping("/seller/store/statistics")
+    fun getSalesData(): ResponseEntity<SalesData> {
+        return ApiResponse.success(
+            HttpStatus.OK,
+            storeService.getSalesData()
+        )
+    }
+
 }

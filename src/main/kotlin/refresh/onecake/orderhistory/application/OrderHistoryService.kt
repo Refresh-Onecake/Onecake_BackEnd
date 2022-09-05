@@ -57,7 +57,7 @@ class OrderHistoryService (
         val menu = menuRepository.findMenuById(orderHistory.menuId)
 
         val orderTime = orderHistory.createdAt.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 a hh:mm").withLocale(Locale.KOREA))
-        val pickUpDate = LocalDate.parse(orderHistory.pickUpDay, DateTimeFormatter.ISO_DATE).format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 "))
+        val pickUpDate = orderHistory.pickUpDay.format(DateTimeFormatter.ISO_DATE).format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 "))
         val pickUpTime = LocalTime.parse(orderHistory.pickUpTime).format(DateTimeFormatter.ofPattern("a hh:mm").withLocale(Locale.KOREA))
 
         return SpecificOrderHistory(
