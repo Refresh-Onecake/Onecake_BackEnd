@@ -1,6 +1,7 @@
 package refresh.onecake.dayoff.application
 
 import org.springframework.stereotype.Service
+import refresh.onecake.dayoff.adapter.infra.dto.DayOffDto
 import refresh.onecake.dayoff.domain.DayOff
 import refresh.onecake.dayoff.domain.DayOffRepository
 import refresh.onecake.member.application.SecurityUtil
@@ -15,7 +16,7 @@ class DayOffService (
         return dayOffRepository.findAllByStoreIdOrderByDayAsc(storeId).map { it.day }
     }
 
-    fun setDayOff(dayOffDto: refresh.onecake.adapter.api.dto.DayOffDto): DefaultResponseDto {
+    fun setDayOff(dayOffDto: DayOffDto): DefaultResponseDto {
         val id = SecurityUtil.getCurrentMemberId()
         val dayOff = dayOffRepository.findByStoreIdAndDay(id, dayOffDto.dayOff)
         return if (dayOff != null) {
