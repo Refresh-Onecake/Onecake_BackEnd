@@ -1,6 +1,7 @@
 package refresh.onecake.orderhistory.domain
 
 import refresh.onecake.member.domain.BaseTimeEntity
+import java.time.LocalDate
 import javax.persistence.*
 
 @Entity

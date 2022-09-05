@@ -9,12 +9,16 @@ import refresh.onecake.member.domain.SellerRepository
 import refresh.onecake.menu.adapter.infra.dto.NeighborhoodStore
 import refresh.onecake.menu.adapter.infra.dto.StoreMenuListDto
 import refresh.onecake.menu.domain.MenuRepository
+import refresh.onecake.orderhistory.domain.OrderHistoryRepository
+import refresh.onecake.orderhistory.domain.OrderState
 import refresh.onecake.response.adapter.dto.DefaultResponseDto
 import refresh.onecake.review.domain.ReviewRepository
 import refresh.onecake.store.adapter.dto.*
 import refresh.onecake.store.domain.Store
 import refresh.onecake.store.domain.StoreRepository
 import refresh.onecake.storelike.domain.StoreLikeRepository
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Service
 class StoreService (
@@ -24,7 +28,8 @@ class StoreService (
     private val addressRepository: AddressRepository,
     private val storeLikeRepository: StoreLikeRepository,
     private val reviewRepository: ReviewRepository,
-    private val sellerRepository: SellerRepository
+    private val sellerRepository: SellerRepository,
+    private val orderHistoryRepository: OrderHistoryRepository
 ){
 
     fun registerStore(applyStoreRequestDto: ApplyStoreRequestDto) : DefaultResponseDto {
@@ -148,5 +153,16 @@ class StoreService (
     fun getSellerChatUrl(): String {
         val id = SecurityUtil.getCurrentMemberId()
         return storeRepository.getById(id).kakaoChannelUrl
+    }
+
+    fun getSalesData() : SalesData{
+        val id = SecurityUtil.getCurrentMemberId()
+        val thisMonth = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"))
+        val lastMonth = LocalDate.now().minusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM"))
+        return SalesData(
+            numOfOrdersThisMonth = orderHistoryRepository.countByPickUpDayStartsWithAndStoreId(thisMonth, id),
+            numOfSalesThisMonth = orderHistoryRepository.countByPickUpDayStartsWithAndStoreIdAndState(thisMonth, id, OrderState.PICKEDUP),
+            numOfSalesLastMonth = orderHistoryRepository.countByPickUpDayStartsWithAndStoreIdAndState(lastMonth, id, OrderState.PICKEDUP)
+        )
     }
 }
