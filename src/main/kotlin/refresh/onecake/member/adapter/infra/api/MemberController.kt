@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import refresh.onecake.response.adapter.dto.DefaultResponseDto
 import refresh.onecake.member.adapter.infra.dto.MemberInformation
+import refresh.onecake.member.adapter.infra.dto.PhoneNumber
+import refresh.onecake.member.adapter.infra.dto.ProfileAndNickname
 import refresh.onecake.response.adapter.api.ApiResponse
 import refresh.onecake.member.application.MemberInfo
 import refresh.onecake.member.application.MemberService
@@ -31,6 +33,29 @@ class MemberController (
         return ApiResponse.success(HttpStatus.OK, memberInfo.getMemberInfo())
     }
 
+    @Operation(summary = "프로필 수정전 프로필,닉네임 넘겨받는 api")
+    @GetMapping("/member/profile")
+    fun showProfile(): ResponseEntity<ProfileAndNickname> {
+        return ApiResponse.success(HttpStatus.OK, memberInfo.showProfile())
+    }
+
+    @Operation(summary = "프로필 수정하기")
+    @PutMapping("/member/profile")
+    fun editProfile(@RequestBody profileAndNickname: ProfileAndNickname): ResponseEntity<DefaultResponseDto> {
+        return ApiResponse.success(HttpStatus.OK, memberInfo.editProfile(profileAndNickname))
+    }
+
+    @Operation(summary = "휴대폰번호 수정전 휴대폰번호 넘겨받는 api")
+    @GetMapping("/member/phoneNumber")
+    fun showPhoneNumber(): ResponseEntity<String> {
+        return ApiResponse.success(HttpStatus.OK, memberInfo.showPhoneNumber())
+    }
+
+    @Operation(summary = "휴대폰번호 수정하기")
+    @PutMapping("/member/phoneNumber")
+    fun editPhoneNumber(@RequestBody phoneNumber: PhoneNumber): ResponseEntity<DefaultResponseDto> {
+        return ApiResponse.success(HttpStatus.OK, memberInfo.editPhoneNumber(phoneNumber))
+    }
 
 
 
@@ -39,5 +64,6 @@ class MemberController (
     fun resign(): ResponseEntity<DefaultResponseDto> {
         return ApiResponse.success(HttpStatus.OK, memberService.resign())
     }
+
 
 }

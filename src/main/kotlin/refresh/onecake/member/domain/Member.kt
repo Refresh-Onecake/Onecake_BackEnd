@@ -17,7 +17,7 @@ class Member(
 
     var password: String,
 
-    val phoneNumber: String,
+    var phoneNumber: String,
 
     var profileImg: String?,
 

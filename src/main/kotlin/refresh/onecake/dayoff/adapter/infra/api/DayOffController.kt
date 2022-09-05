@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Operation
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import refresh.onecake.adapter.api.dto.DayOffDto
+import refresh.onecake.dayoff.adapter.infra.dto.DayOffDto
 import refresh.onecake.response.adapter.dto.DefaultResponseDto
 import refresh.onecake.dayoff.application.DayOffService
 import refresh.onecake.response.adapter.api.ApiResponse
