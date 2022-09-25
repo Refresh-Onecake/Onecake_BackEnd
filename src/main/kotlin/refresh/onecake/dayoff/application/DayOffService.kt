@@ -18,19 +18,20 @@ class DayOffService (
 
     fun setDayOff(dayOffDto: DayOffDto): DefaultResponseDto {
         val id = SecurityUtil.getCurrentMemberId()
-        val dayOff = dayOffRepository.findByStoreIdAndDay(id, dayOffDto.dayOff)
-        return if (dayOff != null) {
-            dayOffRepository.delete(dayOff)
-            DefaultResponseDto(true, "휴무 일정을 취소하였습니다.")
-        } else {
-            dayOffRepository.save(
-                DayOff(
-                    storeId = id,
-                    day= dayOffDto.dayOff
-                )
-            )
-            DefaultResponseDto(true, "휴무 일정을 등록하였습니다.")
+
+        val specificMonth = dayOffDto.dayOff[0].subSequence(0, 7).toString()
+        dayOffRepository.deleteAllByDayStartsWithAndStoreId(specificMonth, id)
+
+        val entities: MutableList<DayOff> = mutableListOf()
+        for (i in dayOffDto.dayOff.indices) {
+            entities.add(DayOff(
+                storeId = id,
+                day = dayOffDto.dayOff[i]
+            ))
         }
+        dayOffRepository.saveAll(entities)
+
+        return DefaultResponseDto(true, "휴무 일정을 등록하였습니다.")
 
     }
 
