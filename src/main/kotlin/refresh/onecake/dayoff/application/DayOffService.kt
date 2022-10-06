@@ -19,7 +19,8 @@ class DayOffService (
     fun setDayOff(dayOffDto: DayOffDto): DefaultResponseDto {
         val id = SecurityUtil.getCurrentMemberId()
 
-        val specificMonth = dayOffDto.dayOff[0].subSequence(0, 7).toString()
+        val specificMonth = dayOffDto.dayOff[0].subSequence(0, 8).toString()
+        println(specificMonth)
         dayOffRepository.deleteAllByDayStartsWithAndStoreId(specificMonth, id)
 
         val entities: MutableList<DayOff> = mutableListOf()
