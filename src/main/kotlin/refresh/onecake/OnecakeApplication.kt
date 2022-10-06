@@ -21,5 +21,4 @@ class OnecakeApplication {
 
 fun main(args: Array<String>) {
 	runApplication<OnecakeApplication>(*args)
-	println(ZoneId.systemDefault())
 }

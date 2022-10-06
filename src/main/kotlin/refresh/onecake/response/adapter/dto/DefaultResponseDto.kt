@@ -1,6 +1,7 @@
 package refresh.onecake.response.adapter.dto
 
-data class DefaultResponseDto (
+data class DefaultResponseDto
+    (
     val success:Boolean,
     val message:String
 )
