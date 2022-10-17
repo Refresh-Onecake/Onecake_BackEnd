@@ -84,11 +84,20 @@ class StoreController (
     }
 
     @Operation(summary = "판매 통계")
-    @GetMapping("/seller/store/statistics")
-    fun getSalesData(): ResponseEntity<SalesData> {
+    @GetMapping("/seller/store/statistics/{month}")
+    fun getSalesData(@PathVariable month:String): ResponseEntity<SalesData> {
         return ApiResponse.success(
             HttpStatus.OK,
-            storeService.getSalesData()
+            storeService.getSalesData(month)
+        )
+    }
+
+    @Operation(summary = "판매 그래프 데이터")
+    @GetMapping("/seller/store/chart/statistics/{month}")
+    fun getSalesGraphData(@PathVariable month:String): ResponseEntity<GraphData> {
+        return ApiResponse.success(
+            HttpStatus.OK,
+            storeService.getSalesGraphData(month)
         )
     }
 
