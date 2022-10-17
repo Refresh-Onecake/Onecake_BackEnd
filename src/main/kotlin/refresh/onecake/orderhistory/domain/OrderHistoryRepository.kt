@@ -2,6 +2,7 @@ package refresh.onecake.orderhistory.domain
 
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
@@ -20,5 +21,20 @@ interface OrderHistoryRepository : JpaRepository<OrderHistory, Long>{
 //    fun getStatesForStatistics(pickUpDate: LocalDate, storeId: Long): List<LocalDate>
 
     fun countByPickUpDayStartsWithAndStoreId(pickUpDay: String, storeId: Long): Long
-    fun countByPickUpDayStartsWithAndStoreIdAndState(pickUpDay: String, storeId: Long, state:OrderState): Long
+    fun  countByPickUpDayStartsWithAndStoreIdAndState(pickUpDay: String, storeId: Long, state:OrderState): Long
+
+    @Query(nativeQuery = true, value = """
+        select *
+        from order_history o
+        where 
+            (o.pick_up_day like ?1%
+            or o.pick_up_day like ?2%
+            or o.pick_up_day like ?3%
+            or o.pick_up_day like ?4%
+            or o.pick_up_day like ?5%)
+            and o.store_id = ?6
+            and o.state = ?7
+    """)
+    fun getSalesGraphData(month: String, monthMinusOne: String, monthMinusTwo: String, monthMinusThree: String, monthMinusFour: String,
+                          storeId: Long, state: String): List<OrderHistory>
 }

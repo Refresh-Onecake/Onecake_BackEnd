@@ -18,7 +18,10 @@ import refresh.onecake.store.domain.Store
 import refresh.onecake.store.domain.StoreRepository
 import refresh.onecake.storelike.domain.StoreLikeRepository
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
+import java.util.*
 
 @Service
 class StoreService (
@@ -155,14 +158,35 @@ class StoreService (
         return storeRepository.getById(id).kakaoChannelUrl
     }
 
-    fun getSalesData() : SalesData{
+    fun getSalesData(month: String) : SalesData{
         val id = SecurityUtil.getCurrentMemberId()
-        val thisMonth = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"))
-        val lastMonth = LocalDate.now().minusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM"))
+        val lastMonth = LocalDate.parse(month, DateTimeFormatter.ofPattern("yyyy-MM")).minusMonths(1).toString()
         return SalesData(
-            numOfOrdersThisMonth = orderHistoryRepository.countByPickUpDayStartsWithAndStoreId(thisMonth, id),
-            numOfSalesThisMonth = orderHistoryRepository.countByPickUpDayStartsWithAndStoreIdAndState(thisMonth, id, OrderState.PICKEDUP),
+            numOfOrdersThisMonth = orderHistoryRepository.countByPickUpDayStartsWithAndStoreId(month, id),
+            numOfSalesThisMonth = orderHistoryRepository.countByPickUpDayStartsWithAndStoreIdAndState(month, id, OrderState.PICKEDUP),
             numOfSalesLastMonth = orderHistoryRepository.countByPickUpDayStartsWithAndStoreIdAndState(lastMonth, id, OrderState.PICKEDUP)
+        )
+    }
+
+    fun getSalesGraphData(month: String): GraphData{
+        val id = SecurityUtil.getCurrentMemberId()
+        val formatter: DateTimeFormatter = DateTimeFormatterBuilder()
+            .parseCaseInsensitive()
+            .appendPattern("yyyy-MM")
+            .toFormatter(Locale.KOREA)
+        val monthMinusOne = YearMonth.parse(month, formatter).minusMonths(1).toString()
+        val monthMinusTwo = YearMonth.parse(month, formatter).minusMonths(2).toString()
+        val monthMinusThree = YearMonth.parse(month, formatter).minusMonths(3).toString()
+        val monthMinusFour = YearMonth.parse(month, formatter).minusMonths(4).toString()
+        val fiveMonthsOrderHistory = orderHistoryRepository.getSalesGraphData(month, monthMinusOne, monthMinusTwo, monthMinusThree, monthMinusFour,
+                                                                                id, OrderState.PICKEDUP.toString())
+        println(fiveMonthsOrderHistory)
+        return GraphData(
+            month = fiveMonthsOrderHistory.count { it.pickUpDay.startsWith(month) },
+            monthMinusOne = fiveMonthsOrderHistory.count { it.pickUpDay.startsWith(monthMinusOne) },
+            monthMinusTwo = fiveMonthsOrderHistory.count { it.pickUpDay.startsWith(monthMinusTwo) },
+            monthMinusThree = fiveMonthsOrderHistory.count { it.pickUpDay.startsWith(monthMinusThree) },
+            monthMinusFour = fiveMonthsOrderHistory.count { it.pickUpDay.startsWith(monthMinusFour) }
         )
     }
 }
