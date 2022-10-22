@@ -160,7 +160,7 @@ class StoreService (
 
     fun getSalesData(month: String) : SalesData{
         val id = SecurityUtil.getCurrentMemberId()
-        val lastMonth = LocalDate.parse(month, DateTimeFormatter.ofPattern("yyyy-MM")).minusMonths(1).toString()
+        val lastMonth = YearMonth.parse(month, DateTimeFormatter.ofPattern("yyyy-MM")).minusMonths(1).toString()
         return SalesData(
             numOfOrdersThisMonth = orderHistoryRepository.countByPickUpDayStartsWithAndStoreId(month, id),
             numOfSalesThisMonth = orderHistoryRepository.countByPickUpDayStartsWithAndStoreIdAndState(month, id, OrderState.PICKEDUP),
