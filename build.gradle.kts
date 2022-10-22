@@ -65,6 +65,9 @@ dependencies {
 
 	// aws s3
 	implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
+
+	// fcm
+	implementation("com.google.firebase:firebase-admin:8.1.0")
 }
 
 tasks.withType<KotlinCompile> {

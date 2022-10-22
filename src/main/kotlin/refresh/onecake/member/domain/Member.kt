@@ -24,6 +24,8 @@ class Member(
     @Enumerated(EnumType.STRING)
     var memberType: MemberType,
 
-    var isActivated: Boolean
+    var isActivated: Boolean,
+
+    val fcmToken: String
 
 ) : BaseTimeEntity()

@@ -33,6 +33,7 @@ class LoginService(
     private val consumerRepository: ConsumerRepository,
     private val storeRepository: StoreRepository
 ) {
+    val REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7
 
     @Transactional
     fun signup(signUpRequestDto: SignUpRequestDto): SignUpResponseDto {
@@ -47,7 +48,8 @@ class LoginService(
                 phoneNumber = signUpRequestDto.phoneNumber,
                 memberType = signUpRequestDto.memberType,
                 profileImg = null,
-                isActivated = true
+                isActivated = true,
+                fcmToken = ""
             )
         )
         giveRole(member, signUpRequestDto.memberType)
@@ -85,6 +87,7 @@ class LoginService(
 
         val tokenDto: TokenDto = tokenProvider.generateTokenDto(authentication)
 
+
         val storeId = if (member.memberType == MemberType.SELLER) {
             if (storeRepository.existsById(member.id)) {
                 member.id
@@ -94,6 +97,11 @@ class LoginService(
         } else {
             -1
         }
+
+        redisTemplate.opsForValue().set(loginRequestDto.userId,
+                                        loginRequestDto.fcmToken,
+                                        REFRESH_TOKEN_EXPIRE_TIME.toLong(),
+                                        TimeUnit.MILLISECONDS)
 
         val tokenRoleDto = TokenRoleDto(
             grantType = tokenDto.grantType,
@@ -108,7 +116,7 @@ class LoginService(
             .set(
                 "RT:" + authentication.name,
                 tokenRoleDto.refreshToken,
-                (1000 * 60 * 60 * 24 * 7).toLong(),
+                REFRESH_TOKEN_EXPIRE_TIME.toLong(),
                 TimeUnit.MILLISECONDS
             )
 
@@ -136,7 +144,7 @@ class LoginService(
         redisTemplate.opsForValue().set(
             "RT:" + authentication.name,
             tokenDto.refreshToken,
-            (1000 * 60 * 60 * 24 * 7).toLong(),
+            REFRESH_TOKEN_EXPIRE_TIME.toLong(),
             TimeUnit.MILLISECONDS
         )
 
@@ -146,6 +154,7 @@ class LoginService(
     fun logout(): DefaultResponseDto {
         val id = SecurityUtil.getCurrentMemberId()
         redisTemplate.opsForValue().set("RT:$id", "", 1, TimeUnit.MILLISECONDS)
+        redisTemplate.opsForValue().set(memberRepository.findMemberById(id).userId, "", 1, TimeUnit.MILLISECONDS)
         return DefaultResponseDto(true, "로그아웃 되었습니다.")
     }
 }
