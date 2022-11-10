@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "onecake-fcm",
+  "private_key_id": "050c260d12ca0d129abcf08975e45e0656435a71",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDrrUmn6S6CYDix\nFHifj7SdONUm5vUWWsli6hOULiBwZiWmjfeS2Ce3Q36tNA1L3a13AiUlMtVpVukc\nrJKpp10SAVnYxMBZ1LLMDmStLsfbjm95pX1jJA7Mo14wpMuS1cm1Wo839sxXcHfA\nyJnJ2ZhHH0nXwmcWsFpEJSqpIn7BULaFtslnnk0HSKRwkaRXnK3vh8kK85fVwbqa\nnHjYluQumi/DTfkOPp/KtKIGovZi8pDBvhMn3b75JMgWc6NSEVrWE9oI0qCvrS0O\nK2bXeNzvpP8PUm/vhWtDidSaFsJaWTumNaGcowecroN59yUjzoe8blx/Ewds5lW9\nAExXt/KvAgMBAAECggEAaGQQfRyvajZ+xgkgSOUZho6W861XoDhEfdjbJUatPbwx\nLy4xHE08glOWN9gXj6Q4Yr+Dfo+eshM6HGZgbF9ivUf16St1XBT3waUaeQ+AnULh\nI8vm11QwbfprDTbhqT+jIf5j89EQwCZkFPOGEz+b0N0OE1Db4tPol8iytco+xRdG\niLqHG+7igA8+UV/XyGHn6g6YlDP1uBq/DIHj7z+YgBZ42tkC2HvHeeiBNFq0sEE6\noXEanio/A4fvuOyENlP6iD4haXNODlLUJQNHfpFMgVizpbsZiZd9H5+7P/nj+5ye\nPBBoKmvAC0I08VxfztvK7UDGSxPWkvHF0S6pFx/KaQKBgQD/81zy6nIACbNyHGCf\neNau9PyuP5g6Zu5E4mJRl5sjBcGWRNjqI3kMYeiR6b9u1zBKM1UxL7/1Dcpi0dfU\nThaE1zWkEY+3jyc/gLpoauojL8Zrnq/urEKwXN0QJpgtj1Rpk4iug+V7OKa6Ir1x\nSqqO440QewBKLuvoFEPWED32wwKBgQDruOx1yX/hllf/9Z4bFSuabWvEFwsq9Cch\nhk393bt6DDz+MVIYNSuS9Bt72Bpqx4rDMeBwLaN/UIW/FF4sT4dNb1z5jVv6Wnam\nUyDBl/KbNpX62pXvkhLhyDLQUuPmgNkCpAVWjCJ+I7jEv/1T6CLNEgc/gx+//td0\nicTvOMANpQKBgD9rnvl2DD9kJ/m7fFmniJKbk8zdZyv5e0rISZJsHX3FHF3Ou2zw\n0zq1O/qDz/J4EbghFhf0+/yNqTtpQbCSlNPfu6Pm0hSqvQ/oJshezZtgaCsci/14\n46FtsT0iQwzu+fybGQAdIIyy0eVHXGepF7AGRFr0D3NSQxQjiVeOeLwfAoGBAKse\n28nGNae2VLvjups+iyDYPltjvx+3jpCvxv58cRTwvXZqp4YbUz6jJzCIeOT7Zqi9\nFIlbGE3cTrugNZ1FPpvgNEaVcCgWc/vabPUdMWmr/sTU2fPIvxxZEUpaYkd7Ug6w\ns49Yu9GGbSOnnGfFJT5p0AkzT2E5x386ZFSlhgZhAoGAVwvM1H6SbYM/ci71xWtG\n++QTaGDVh+FTCFCxpPubTdT7Jv/K+10s1/rs23lJwbXPhFGem5REHxgrOV8R+1rP\nb5+Ge68prGOltTkC4A9nXXb7drkLtx+aNegVfB/TvQ1US69vlC0CDEVsUTKv5hHJ\nuB1R9Z6KURagcteBhatihxI=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-x1c5t@onecake-fcm.iam.gserviceaccount.com",
+  "client_id": "100613847251498513056",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-x1c5t%40onecake-fcm.iam.gserviceaccount.com"
+}
