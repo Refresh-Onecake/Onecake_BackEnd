@@ -7,5 +7,6 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming
 data class LoginRequestDto(
 
     val userId: String,
-    val password: String
+    val password: String,
+    val fcmToken: String
 )
