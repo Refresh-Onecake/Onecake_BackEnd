@@ -52,22 +52,4 @@ class LoginController (
     fun logout(): ResponseEntity<DefaultResponseDto> {
         return ApiResponse.success(HttpStatus.OK, loginService.logout())
     }
-
-    @Operation(summary = "ID찾기")
-    @PostMapping("/id")
-    fun searchUserID(@RequestBody idPwSearchRequestDto: UserIdSearchRequestDto): ResponseEntity<UserIdSearchResponseDto> {
-        return ApiResponse.success(
-                HttpStatus.OK,
-                loginService.searchUserId(idPwSearchRequestDto)
-        )
-    }
-
-    @Operation(summary = "PW수정")
-    @PostMapping("/password")
-    fun changePassword(@RequestBody passwordChangeRequestDto: PasswordChangeRequestDto): ResponseEntity<DefaultResponseDto> {
-        return ApiResponse.success(
-                HttpStatus.OK,
-                loginService.changePassword(passwordChangeRequestDto)
-        )
-    }
 }

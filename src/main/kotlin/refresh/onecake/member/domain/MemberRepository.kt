@@ -10,5 +10,4 @@ interface MemberRepository: JpaRepository<Member, Long> {
     fun getByUserId(userId:String): Member
     fun existsByUserId(userId:String) : Boolean
     fun findMemberTypeById(id:Long) : MemberType
-    fun findByPhoneNumber(phoneNumber:String): Member
 }

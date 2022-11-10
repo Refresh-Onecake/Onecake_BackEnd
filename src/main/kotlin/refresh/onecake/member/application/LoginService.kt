@@ -1,6 +1,5 @@
 package refresh.onecake.member.application
 
-import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
@@ -157,58 +156,5 @@ class LoginService(
         redisTemplate.opsForValue().set("RT:$id", "", 1, TimeUnit.MILLISECONDS)
         redisTemplate.opsForValue().set(memberRepository.findMemberById(id).userId, "", 1, TimeUnit.MILLISECONDS)
         return DefaultResponseDto(true, "로그아웃 되었습니다.")
-    }
-
-    /**
-     * 연락처로 userId 검색하는 Function
-     * @author 메이슨
-     * @param idSearchRequestDto phoneNumber
-     * @return userId
-     * @exception ForbiddenException 해당 연락처가 존재하지 않는 경우 / 탈퇴한 회원일 경우
-     */
-    @Transactional
-    fun searchUserId(idSearchRequestDto: UserIdSearchRequestDto): UserIdSearchResponseDto {
-
-        val member: Member;
-
-        try {
-            member = memberRepository.findByPhoneNumber(idSearchRequestDto.phoneNumber);
-        } catch (e: EmptyResultDataAccessException) {
-            throw ForbiddenException("회원이 존재하지 않습니다")
-        }
-
-        if (!member.isActivated) {
-            throw ForbiddenException("탈퇴한 회원입니다.")
-        }
-
-        return UserIdSearchResponseDto(member.userId)
-    }
-
-    /**
-     * userId로 password를 재설정하는 Function
-     * @author 메이슨
-     * @param PasswordChangeRequestDto userId, 재설정할 password
-     * @exception ForbiddenException 해당 회원이 존재하지 않는 경우 / 탈퇴한 회원일 경우 / 재설정할 암호가 비어있는 경우
-     */
-    @Transactional
-    fun changePassword(passwordChangeRequestDto: PasswordChangeRequestDto): DefaultResponseDto {
-        val member: Member;
-
-        try {
-            member = memberRepository.getByUserId(passwordChangeRequestDto.userId);
-        } catch (e: EmptyResultDataAccessException) {
-            throw ForbiddenException("회원이 존재하지 않습니다")
-        }
-        if (!member.isActivated) {
-            throw ForbiddenException("탈퇴한 회원입니다.")
-        }
-        if (passwordChangeRequestDto.password.isBlank()) {
-            throw ForbiddenException("암호가 비어있습니다")
-        }
-
-        member.password = passwordEncoder.encode(passwordChangeRequestDto.password)
-        memberRepository.save(member)
-
-        return DefaultResponseDto(true, "암호 수정이 완료됐습니다.")
     }
 }
