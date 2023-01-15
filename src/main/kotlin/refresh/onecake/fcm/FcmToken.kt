@@ -2,7 +2,7 @@ package refresh.onecake.fcm
 
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Service
-import refresh.onecake.member.adapter.infra.dto.LoginRequestDto
+import refresh.onecake.member.dto.LoginRequestDto
 
 @Service
 class FcmToken (

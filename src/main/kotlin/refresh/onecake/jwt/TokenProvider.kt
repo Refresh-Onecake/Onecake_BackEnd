@@ -13,7 +13,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
-import refresh.onecake.member.adapter.infra.dto.TokenDto
+import refresh.onecake.member.dto.TokenDto
 import java.security.Key
 import java.util.*
 import java.util.stream.Collectors

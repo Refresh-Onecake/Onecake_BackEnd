@@ -3,7 +3,6 @@ package refresh.onecake.fcm
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.Message
 import org.springframework.stereotype.Service
-import refresh.onecake.member.domain.MemberRepository
 
 
 @Service
