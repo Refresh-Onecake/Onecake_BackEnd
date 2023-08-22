@@ -21,11 +21,11 @@ class MemberController (
     private val memberService: MemberService
 ){
 
-    @Operation(summary = "이미지 업로드")
-    @PostMapping("/member/image")
-    fun registerStoreImage(@RequestPart("image") image:MultipartFile): String {
-        return memberInfo.registerImage(image)
-    }
+//    @Operation(summary = "이미지 업로드")
+//    @PostMapping("/member/image")
+//    fun registerStoreImage(@RequestPart("image") image:MultipartFile): String {
+//        return memberInfo.registerImage(image)
+//    }
 
     @Operation(summary = "사용자 정보")
     @GetMapping("/member")

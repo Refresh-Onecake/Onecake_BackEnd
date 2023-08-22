@@ -22,7 +22,7 @@ import java.util.stream.Collectors
 @Component
 class TokenProvider {
 
-    @Value("\${jwt.secret}")
+    @Value("\${security.jwt.token.secret-key}")
     lateinit var secretKey: String
 
     val logger = LoggerFactory.getLogger(this::class.java)
@@ -37,7 +37,7 @@ class TokenProvider {
     private lateinit var key: Key
 
     constructor(
-        @Value("\${jwt.secret}")
+        @Value("\${security.jwt.token.secret-key}")
         secretKey:String
     ){
         var keyBytes: ByteArray = Decoders.BASE64.decode(secretKey)

@@ -8,5 +8,5 @@ data class LoginRequestDto(
 
     val userId: String,
     val password: String,
-    val fcmToken: String
+//    val fcmToken: String
 )

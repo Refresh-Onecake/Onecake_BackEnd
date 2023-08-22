@@ -45,21 +45,30 @@ class StoreController (
 
     @Operation(summary = "소비자 - 가게 탭 (해당 지역의 모든 가게 보기) & 인기순 ")
     @GetMapping("consumer/stores/main")
-    fun getAllStoreByAddress(@RequestBody addressAndFilter: AddressAndFilter): ResponseEntity<List<StoreThumbNail>?> {
+    fun getAllStoreByAddressPopular(): ResponseEntity<List<StoreThumbNail?>> {
         return ApiResponse.success(
             HttpStatus.OK,
-            storeService.getAllStoreByAddressAndFilter(addressAndFilter)
+            storeService.getAllStoreByAddressPopular()
         )
     }
 
-    @Operation(summary = "소비자 - 우리 동네 케이크 불러오기")
-    @GetMapping("consumer/home/neighborhood")
-    fun getNeighborhoodStore(): ResponseEntity<List<NeighborhoodStore>> {
+    @Operation(summary = "소비자 - 가게 탭 (해당 지역의 모든 가게 보기) & 리뷰순 ")
+    @GetMapping("consumer/stores/review")
+    fun getAllStoreByAddressReview(): ResponseEntity<List<StoreThumbNail?>> {
         return ApiResponse.success(
-            HttpStatus.OK,
-            storeService.getNeighborhoodStore()
+                HttpStatus.OK,
+                storeService.getAllStoreByAddressReview()
         )
     }
+
+//    @Operation(summary = "소비자 - 우리 동네 케이크 불러오기")
+//    @GetMapping("consumer/home/neighborhood")
+//    fun getNeighborhoodStore(): ResponseEntity<List<NeighborhoodStore>> {
+//        return ApiResponse.success(
+//            HttpStatus.OK,
+//            storeService.getNeighborhoodStore()
+//        )
+//    }
 
 
 

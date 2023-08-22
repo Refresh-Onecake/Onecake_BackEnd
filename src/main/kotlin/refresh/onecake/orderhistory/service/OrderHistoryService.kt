@@ -1,7 +1,7 @@
 package refresh.onecake.orderhistory.service
 
 import org.springframework.stereotype.Service
-import refresh.onecake.fcm.FcmService
+//import refresh.onecake.fcm.FcmService
 import refresh.onecake.member.service.SecurityUtil
 import refresh.onecake.menu.dto.StoreMenuListDto
 import refresh.onecake.menu.repository.MenuRepository
@@ -26,7 +26,7 @@ class OrderHistoryService (
     private val questionsAndAnswers: QuestionsAndAnswers,
     private val reviewRepository: ReviewRepository,
     private val orderStateService: OrderStateService,
-    private val fcmService: FcmService
+//    private val fcmService: FcmService
 ){
 
     fun getOrderHistorys(): List<MyOrderHistorys> {

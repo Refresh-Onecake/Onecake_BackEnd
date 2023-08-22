@@ -92,7 +92,8 @@ class StoreService (
             storeName = store.storeName,
             storeDescription = description,
             likeNum = storeLikeRepository.countByStoreId(storeId),
-            isLiked = storeLikeRepository.existsByMemberIdAndStoreId(id, storeId)
+            isLiked = storeLikeRepository.existsByMemberIdAndStoreId(id, storeId),
+            chatUrl = store.kakaoChannelUrl
         )
     }
 
@@ -111,46 +112,66 @@ class StoreService (
         )
     }
 
-    fun getAllStoreByAddressAndFilter(addressAndFilter: AddressAndFilter): List<StoreThumbNail>? {
+    fun getAllStoreByAddressPopular(): List<StoreThumbNail?> {
         val id = SecurityUtil.getCurrentMemberId()
-        val addressId: List<Long>? = addressRepository.findAllBySggNm(addressAndFilter.address)?.map { it.id }
-        val output: MutableList<StoreThumbNail> = mutableListOf()
-        for (i in addressId?.indices!!) {
-            val store = storeRepository.findByAddressIdAndIsActivated(addressId[i], true) ?: continue
-            output.add(
-                StoreThumbNail(
-                    storeId = store.id,
-                    storeImage = store.storeImage,
-                    guName = addressRepository.getById(addressId[i]).sggNm!!,
-                    storeName = store.storeName,
-                    likedNum = storeLikeRepository.countByStoreId(store.id),
-                    reviewNum = reviewRepository.countByStoreId(store.id),
-                    isLiked = storeLikeRepository.existsByMemberIdAndStoreId(id, store.id)
+//        val addressId: List<Long>? = addressRepository.findAllBySggNm(addressAndFilter.address)?.map { it.id }
+//        val output: MutableList<StoreThumbNail> = mutableListOf()
+        val stores = storeRepository.findAll().map { it ->
+            addressRepository.getById(it.id).sggNm?.let { it1 ->
+                StoreThumbNail(it.id, it.storeImage,
+                        it1, it.storeName,
+                        storeLikeRepository.countByStoreId(it.id), reviewRepository.countByStoreId(it.id),
+                    storeLikeRepository.existsByMemberIdAndStoreId(id, it.id)
                 )
-            )
+            }
         }
-        if (addressAndFilter.filter == "review") {
-            output.sortByDescending { it.reviewNum }
-        } else {
-            output.sortByDescending { it.likedNum }
+//        output.add(
+//                StoreThumbNail(
+//                        storeId = store.id,
+//                        storeImage = store.storeImage,
+//                        guName = addressRepository.getById(addressId[i]).sggNm!!,
+//                        storeName = store.storeName,
+//                        likedNum = storeLikeRepository.countByStoreId(store.id),
+//                        reviewNum = reviewRepository.countByStoreId(store.id),
+//                        isLiked = storeLikeRepository.existsByMemberIdAndStoreId(id, store.id)
+//                )
+//        )
+//        if (addressAndFilter.filter == "review") {
+//            output.sortByDescending { it.reviewNum }
+//        } else {
+//            output.sortByDescending { it.likedNum }
+//        }
+        return stores.sortedByDescending { it?.likedNum }
+    }
+
+    fun getAllStoreByAddressReview(): List<StoreThumbNail?> {
+        val id = SecurityUtil.getCurrentMemberId()
+        val stores = storeRepository.findAll().map { it ->
+            addressRepository.getById(it.id).sggNm?.let { it1 ->
+                StoreThumbNail(it.id, it.storeImage,
+                        it1, it.storeName,
+                        storeLikeRepository.countByStoreId(it.id), reviewRepository.countByStoreId(it.id),
+                        storeLikeRepository.existsByMemberIdAndStoreId(id, it.id)
+                )
+            }
         }
-        return output
+        return stores.sortedByDescending { it?.reviewNum }
     }
 
     /*
         TO DO : N+1 해결
      */
-    fun getNeighborhoodStore(): List<NeighborhoodStore> {
-        val addresses = addressRepository.findAllBySggNm("마포구")
-        val stores: MutableList<Store> = mutableListOf()
-
-        for (i in addresses?.indices!!) {
-            val store = storeRepository.findByAddressIdAndIsActivated(addresses[i].id, true)
-            if(store != null) stores.add(store)
-            if(stores.size >= 10) break
-        }
-        return stores.map { modelMapper.map(it, NeighborhoodStore::class.java) }
-    }
+//    fun getNeighborhoodStore(): List<NeighborhoodStore> {
+//        val addresses = addressRepository.findAllBySggNm("마포구")
+//        val stores: MutableList<Store> = mutableListOf()
+//
+//        for (i in addresses?.indices!!) {
+//            val store = storeRepository.findByAddressIdAndIsActivated(addresses[i].id, true)
+//            if(store != null) stores.add(store)
+//            if(stores.size >= 10) break
+//        }
+//        return stores.map { modelMapper.map(it, NeighborhoodStore::class.java) }
+//    }
 
 
     fun getSellerChatUrl(): String {

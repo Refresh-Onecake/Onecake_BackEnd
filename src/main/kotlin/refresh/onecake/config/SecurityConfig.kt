@@ -47,7 +47,7 @@ class SecurityConfig
             .and()
             .authorizeRequests()
             .antMatchers("/api/v1/auth/**").permitAll()
-            .antMatchers("/").permitAll()
+            .antMatchers("/**").permitAll()
             .antMatchers("/health").permitAll()
             .antMatchers("/swagger-ui/**").permitAll()
             .antMatchers("/swagger-resources/**").permitAll()

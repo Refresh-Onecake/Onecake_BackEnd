@@ -98,10 +98,10 @@ class LoginService(
             -1
         }
 
-        redisTemplate.opsForValue().set(loginRequestDto.userId,
-                                        loginRequestDto.fcmToken,
-                                        REFRESH_TOKEN_EXPIRE_TIME.toLong(),
-                                        TimeUnit.MILLISECONDS)
+//        redisTemplate.opsForValue().set(loginRequestDto.userId,
+//                                        loginRequestDto.fcmToken,
+//                                        REFRESH_TOKEN_EXPIRE_TIME.toLong(),
+//                                        TimeUnit.MILLISECONDS)
 
         val tokenRoleDto = TokenRoleDto(
             grantType = tokenDto.grantType,

@@ -42,7 +42,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-security:2.7.0")
 
 	//db
-	implementation("org.mariadb.jdbc:mariadb-java-client:2.4.1")
+//	implementation("org.mariadb.jdbc:mariadb-java-client:2.4.1")
+	implementation("mysql:mysql-connector-java")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.6.2")
 	implementation("org.springframework.boot:spring-boot-starter-data-redis:2.7.0")
 
@@ -62,12 +63,12 @@ dependencies {
 //	implementation("org.springdoc:springdoc-openapi-ui:1.6.1")
 //	implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.1")
 	implementation("io.springfox:springfox-boot-starter:3.0.0")
-
-	// aws s3
-	implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
-
-	// fcm
-	implementation("com.google.firebase:firebase-admin:8.1.0")
+//
+//	 aws s3
+//	implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
+//
+//	 fcm
+//	implementation("com.google.firebase:firebase-admin:8.1.0")
 }
 
 tasks.withType<KotlinCompile> {

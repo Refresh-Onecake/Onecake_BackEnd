@@ -10,6 +10,7 @@ class QuestionsAndAnswers(
 
     fun getQuestionsAndAnswersWhoseConsumerInputIsFalse(orderHistoryId: Long): List<String> {
         val questionAndAnswer = orderSheetRepository.getBundleOfQuestionAndAnswerWhoseConsumerInputIsFalse(orderHistoryId)
+        println(questionAndAnswer.toString())
         var forms = mutableListOf<String>()
         for (i in questionAndAnswer.indices) {
             forms.add(i, questionAndAnswer[i].question + " : " +questionAndAnswer[i].answer)

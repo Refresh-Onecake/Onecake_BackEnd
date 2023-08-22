@@ -5,5 +5,6 @@ data class StoreMainInfoDto (
     var storeDescription: String,
     var storeImage: String,
     var likeNum: Long,
-    var isLiked: Boolean
+    var isLiked: Boolean,
+    var chatUrl: String
 )

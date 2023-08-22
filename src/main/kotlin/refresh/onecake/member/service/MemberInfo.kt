@@ -1,8 +1,8 @@
 package refresh.onecake.member.service
 
 import org.springframework.stereotype.Service
-import org.springframework.web.multipart.MultipartFile
-import refresh.onecake.aws.service.S3Uploader
+//import org.springframework.web.multipart.MultipartFile
+//import refresh.onecake.aws.service.S3Uploader
 import refresh.onecake.member.dto.MemberInformation
 import refresh.onecake.member.dto.PhoneNumber
 import refresh.onecake.member.dto.ProfileAndNickname
@@ -12,13 +12,13 @@ import refresh.onecake.common.response.DefaultResponseDto
 @Service
 class MemberInfo (
     private val memberRepository: MemberRepository,
-    private val s3Uploader: S3Uploader
+//    private val s3Uploader: S3Uploader
 ){
     private val defaultProfileImg: String = "https://onecake-image-bucket.s3.ap-northeast-2.amazonaws.com/472fe03a-20df-4a95-a614-ff0094b27034-Mask%20group.png"
 
-    fun registerImage(multipartFile: MultipartFile): String {
-        return s3Uploader.upload(multipartFile)
-    }
+//    fun registerImage(multipartFile: MultipartFile): String {
+//        return s3Uploader.upload(multipartFile)
+//    }
 
     fun getMemberInfo(): MemberInformation {
         val id = SecurityUtil.getCurrentMemberId()
